@@ -1,0 +1,16 @@
+---
+
+# Bind the admin AD group to the cluster-admin role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+ name: cluster-admins
+roleRef:
+ apiGroup: rbac.authorization.k8s.io
+ kind: ClusterRole
+ name: cluster-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  # devita-prod-group-k8s-admins
+  name: "94f2fc17-641c-4fa8-8b9d-725acd7d7391"

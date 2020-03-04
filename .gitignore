@@ -1,0 +1,26 @@
+# OS X
+.history
+.DS_Store
+
+# IntelliJ
+.idea_modules
+*.iml
+*.iws
+*.ipr
+.idea/
+build/
+*/build/
+out/
+
+**/*.retry
+**/*.lock
+**/charts
+**/secrets
+
+# Web server auth file
+**/auth
+
+# Possible charts fetched along the installation
+azure-key-vault-env-injector
+azure-key-vault-controller
+ingress-azure

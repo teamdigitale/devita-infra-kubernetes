@@ -1,0 +1,18 @@
+---
+
+controller:
+  nodeSelector:
+    beta.kubernetes.io/os: linux
+  replicaCount: 2
+  metrics:
+    enabled: "true"
+  stats:
+    enabled: "true"
+  service:
+    externalTrafficPolicy: "Local"
+    loadBalancerIP: 51.105.123.240
+defaultBackend:
+  nodeSelector:
+    beta.kubernetes.io/os: linux
+rbac:
+  create: "true"
