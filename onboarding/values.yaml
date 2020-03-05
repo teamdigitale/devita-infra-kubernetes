@@ -1,0 +1,62 @@
+---
+
+global:
+  registry: ''
+
+onboarding:
+  replicaCount: 1
+
+  images:
+    repository: docker.io/italia/developers-italia-onboarding
+    tag: dockerize
+    pullPolicy: Always
+
+  env:
+    onboarding_port: "3000"
+    onboarding_environment: "prod"
+    onboarding_app_base_url: "https://onboarding.developers.italia.it"
+    onboarding_es_url: "http://localhost:9200/indicepa_pec/_search"
+    onboarding_smtp_port: "587"
+    onboarding_smtp_secure: "false"
+    onboarding_email_from: "Test account"
+    onboarding_email_cc: "prova@prova.it"
+    onboarding_email_bcc: "prova@prova.it"
+    onboarding_email_override_recipient_addr: "prova@prova.it"
+    onboarding_email_subject: "Test"
+
+  services:
+    httpPort:
+      port: 3000
+
+  ingress:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    hosts:
+      - onboarding.developers.italia.it
+    path: /
+    tls:
+      - hosts:
+          - onboarding.developers.italia.it
+        secretName: onboarding-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}

@@ -1,0 +1,113 @@
+---
+
+apiVersion: apps/v1beta2
+
+kind: Deployment
+metadata:
+  name: {{ template "onboarding.fullname" . }}
+  labels:
+    app: {{ template "onboarding.name" . }}
+    chart: {{ template "onboarding.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.onboarding.replicaCount }}
+  {{- if .Values.onboarding.strategy }}
+  {{- with .Values.onboarding.strategy }}
+  strategy:
+    type: {{ toYaml .type }}
+    rollingUpdate:
+      maxUnavailable: {{ toYaml .rollingUpdate.maxUnavailable }}
+      maxSurge: {{ toYaml .rollingUpdate.maxSurge }}
+  {{- end }}
+  {{- end }}
+  revisionHistoryLimit: {{ .Values.onboarding.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ template "onboarding.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "onboarding.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        - name: onboarding
+          image: "{{ .Values.global.registry }}{{ .Values.onboarding.images.repository }}:{{ tpl .Values.onboarding.images.tag . }}"
+          imagePullPolicy: {{ .Values.onboarding.images.pullPolicy }}
+
+          env:
+            - name: ONBOARDING_PORT
+              value: "{{ .Values.onboarding.env.onboarding_port }}"
+            - name: ONBOARDING_ENVIRONMENT
+              value: "{{ .Values.onboarding.env.onboarding_environment }}"
+            - name: ONBOARDING_APP_BASE_URL
+              value: "{{ .Values.onboarding.env.onboarding_app_base_url }}"
+            - name: ONBOARDING_ES_URL
+              value: "{{ .Values.onboarding.env.onboarding_es_url }}"
+            - name: ONBOARDING_SMTP_PORT
+              value: "{{ .Values.onboarding.env.onboarding_smtp_port }}"
+            - name: ONBOARDING_SMTP_SECURE
+              value: "{{ .Values.onboarding.env.onboarding_smtp_secure }}"
+            - name: ONBOARDING_EMAIL_FROM
+              value: "{{ .Values.onboarding.env.onboarding_email_from }}"
+            - name: ONBOARDING_EMAIL_CC
+              value: "{{ .Values.onboarding.env.onboarding_email_cc }}"
+            - name: ONBOARDING_EMAIL_BCC
+              value: "{{ .Values.onboarding.env.onboarding_email_bcc }}"
+            - name: ONBOARDING_EMAIL_OVERRIDE_RECIPIENT_ADDR
+              value: "{{ .Values.onboarding.env.onboarding_email_override_recipient_addr }}"
+            - name: ONBOARDING_EMAIL_SUBJECT
+              value: "{{ .Values.onboarding.env.onboarding_email_subject }}"
+            - name: ONBOARDING_SMTP_HOSTNAME
+              value: onboarding-secrets@azurekeyvault?smtp-hostname
+            - name: ONBOARDING_SMTP_USERNAME
+              value: onboarding-secrets@azurekeyvault?smtp-username
+            - name: ONBOARDING_SMTP_PASSWORD
+              value: onboarding-secrets@azurekeyvault?smtp-password
+
+          volumeMounts:
+            - name: db
+              mountPath: /private/data
+              readOnly: false
+
+          {{- if .Values.onboarding.livenessProbe }}
+          {{- with .Values.onboarding.livenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: {{ toYaml .httpGet.path }}
+              port: {{ toYaml .httpGet.port }}
+            initialDelaySeconds: {{ toYaml .initialDelaySeconds }}
+            timeoutSeconds: {{ toYaml .timeoutSeconds }}
+            periodSeconds: {{ toYaml .periodSeconds }}
+            failureThreshold: {{ toYaml .failureThreshold }}
+          {{- end }}
+          {{- end }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.onboarding.services.httpPort.port }}
+              protocol: {{ .Values.onboarding.services.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.onboarding.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.onboarding.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.onboarding.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: onboarding
