@@ -9,6 +9,11 @@ crawler:
     tag: latest
     pullPolicy: Always
 
+  env:
+    elastic_host: "my-elasticsearch:9200"
+    elastic_user: "demo"
+    elastic_pass: "demo"
+
   cronjob_schedule: "0 * * * *"
 
   resources:
