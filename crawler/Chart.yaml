@@ -1,0 +1,9 @@
+---
+
+apiVersion: v1
+
+name: crawler
+description: The crawler scans for PA code repositories and populates a given Elastic Search instance.
+
+version: 0.1.0
+appVersion: "0.1.0"

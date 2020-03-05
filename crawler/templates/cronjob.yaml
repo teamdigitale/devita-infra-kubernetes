@@ -1,0 +1,36 @@
+---
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "crawler.fullname" . }}
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "{{ .Values.crawler.cronjob_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "crawler.fullname" . }}"
+        spec:
+          containers:
+          - name: {{ template "crawler.fullname" . }}
+            image: "{{ .Values.global.registry }}{{ .Values.crawler.images.repository }}:{{ tpl .Values.crawler.images.tag . }}"
+            imagePullPolicy: {{ .Values.crawler.images.pullPolicy }}
+
+            command: ["./wait-for-it.sh"]
+            args: ["devita_elasticsearch:9200", "-t", "300", "--", "./start.sh"]
+
+            resources:
+{{ toYaml .Values.crawler.resources | indent 14 }}
+            env:
+              - name: CRAWLER_ES_HOSTNAME
+                value: "{{ .Values.crawler.env.crawler_es_hostname }}"
+              - name: CRAWLER_ES_USERNAME
+                value: "{{ .Values.crawler.env.crawler_es_hostname }}"
+              - name: CRAWLER_ES_PASSWORD
+                value: crawler-secrets@azurekeyvault?es-password
+
+          restartPolicy: OnFailure
