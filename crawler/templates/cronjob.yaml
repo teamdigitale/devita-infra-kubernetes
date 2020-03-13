@@ -21,16 +21,16 @@ spec:
             imagePullPolicy: {{ .Values.crawler.images.pullPolicy }}
 
             command: ["./wait-for-it.sh"]
-            args: ["$(ELASTIC_HOST)", "-t", "300", "--", "./start.sh"]
+            args: ["$(ELASTIC_URL)", "-t", "300", "--", "./start.sh"]
 
             resources:
 {{ toYaml .Values.crawler.resources | indent 14 }}
             env:
-              - name: ELASTIC_HOST
-                value: "{{ .Values.crawler.env.elastic_host }}"
+              - name: ELASTIC_URL
+                value: "{{ .Values.crawler.env.elastic_url }}"
               - name: ELASTIC_USER
                 value: "{{ .Values.crawler.env.elastic_user }}"
-              - name: ELASTIC_PASS
+              - name: ELASTIC_PWD
                 value: crawler-secrets@azurekeyvault?elastic-pass
 
           restartPolicy: OnFailure
