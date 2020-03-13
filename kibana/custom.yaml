@@ -1,0 +1,15 @@
+imageTag: "6.8.7"
+
+elasticsearchHosts: "http://developersitalia-master:9200"
+
+extraEnvs:
+  - name: ELASTICSEARCH_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: kibana-secrets
+        key: elasticsearch-username
+  - name: ELASTICSEARCH_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: kibana-secrets
+        key: elasticsearch-password
