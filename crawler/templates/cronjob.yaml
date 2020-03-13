@@ -23,6 +23,12 @@ spec:
             command: ["./wait-for-it.sh"]
             args: ["$(ELASTIC_URL)", "-t", "300", "--", "./start.sh"]
 
+            volumeMounts:
+            - name: configs
+              mountPath: /go/developers-italia-backend/crawler/domains.yml
+              subPath: domains.yml
+              readOnly: true
+
             resources:
 {{ toYaml .Values.crawler.resources | indent 14 }}
             env:
@@ -34,3 +40,11 @@ spec:
                 value: crawler-secrets@azurekeyvault?elastic-pass
 
           restartPolicy: OnFailure
+
+          volumes:
+          - name: configs
+            secret:
+              secretName: {{ template "crawler.fullname" . }}-secrets
+              items:
+              - key: domains.yml
+                path: domains.yml

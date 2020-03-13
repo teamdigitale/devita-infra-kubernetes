@@ -5,7 +5,7 @@ global:
 
 crawler:
   images:
-    repository: italia/publiccode-tools-crawler
+    repository: docker.io/italia/publiccode-tools-crawler
     tag: latest
     pullPolicy: Always
 
@@ -13,7 +13,7 @@ crawler:
     elastic_url: "http://developersitalia-master:9200"
     elastic_user: "elastic"
 
-  cronjob_schedule: "0 * * * *"
+  cronjob_schedule: "0 0 * * *"
 
   resources:
     # For each of the following objects, set limits
