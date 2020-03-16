@@ -30,3 +30,11 @@ helm repo update
 
 helm install -f custom.yaml kibana elastic/kibana
 ```
+
+# Administrative access to Kibana GUI
+
+You can use *kubectl port-forward* to access the installation, even if Kibana is not publicly exposed:
+
+```shell
+kubectl port-forward deployment/kibana-kibana 5601:5601
+```
