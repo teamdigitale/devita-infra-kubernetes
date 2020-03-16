@@ -7,16 +7,14 @@ esConfig:
     xpack.security.enabled: true
     xpack.security.transport.ssl.enabled: true
     xpack.security.transport.ssl.verification_mode: certificate
-    xpack.security.transport.ssl.keystore.type: PKCS12
-    xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-    xpack.security.transport.ssl.truststore.type: PKCS12
-    xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+    xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
+    xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
     xpack.security.authc:
       anonymous:
         username: anonymous_user
         roles: readonly
         authz_exception: true
-    xpack.monitoring.enabled: false
+    xpack.monitoring.enabled: true
     xpack.watcher.enabled: false
     xpack.ml.enabled: false
     http.cors.enabled: true
@@ -42,8 +40,13 @@ esConfig:
 
 antiAffinity: soft
 
-persistence:
-  enabled: false
+volumeClaimTemplate:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-premium-custom
+  resources:
+    requests:
+      storage: 30Gi
 
 secretMounts:
   - name: elastic-certificates

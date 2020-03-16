@@ -14,8 +14,15 @@ These are the steps to install the chart:
 {
   "username": "YOUR_ES_USERNAME",
   "password": "YOUR_ES_PASSWORD",
-  "elastic-certificates.p12": "YOUR_P12_CERT_IN_UTF8_FORMAT"
 }
+```
+
+* Generate the *pfx* certificate for Elasticsearch and load it under the certificates section on the Azure keyvault, using name *k8s-secrets-elasticsearch-certs*
+
+```shell
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout elasticsearch.key -out elasticsearch.crt
+
+openssl pkcs12 -export -out elasticsearch.pfx -inkey elasticsearch.key -in elasticsearch.crt
 ```
 
 * Synchronize the Azure Keyvault secret with Kubernetes
@@ -31,5 +38,5 @@ helm repo add elastic https://helm.elastic.co
 
 helm repo update
 
-helm install -f custom.yaml elasticsearch elastic/elasticsearch
+helm install -f custom.yaml --version 7.6.1 elasticsearch elastic/elasticsearch
 ```
