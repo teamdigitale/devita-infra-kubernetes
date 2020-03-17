@@ -5,7 +5,7 @@ global:
 
 crawler:
   images:
-    repository: docker.io/italia/publiccode-tools-crawler
+    repository: docker.io/italia/developers-italia-backend
     tag: latest
     pullPolicy: Always
 
