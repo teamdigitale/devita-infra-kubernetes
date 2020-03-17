@@ -15,7 +15,7 @@ onboarding:
     onboarding_port: "3000"
     onboarding_environment: "prod"
     onboarding_app_base_url: "https://onboarding.developers.italia.it"
-    onboarding_es_url: "http://developersitalia-master:9200/indicepa_pec/_search"
+    onboarding_es_url: "http://elastic.developers.italia.it/indicepa_pec/_search"
     onboarding_smtp_port: "587"
     onboarding_smtp_secure: "false"
     onboarding_email_from: "Test account"
