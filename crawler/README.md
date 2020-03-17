@@ -11,6 +11,8 @@ To deploy the Developers Italia crawler do the following:
 }
 ```
 
+> NOTE: the basic-auth parameter for each code hosting platform is optional, although strongly suggested to avoid rate-limiting issues.
+
 The GitHub security token can be created [here](https://github.com/settings/tokens).
 
 Then, deploy the chart with helm (from the root directory of this repository):
@@ -18,3 +20,7 @@ Then, deploy the chart with helm (from the root directory of this repository):
 ```shell
 helm install crawler crawler
 ```
+
+## Codebase
+
+The codebase is available [here](https://github.com/italia/developers-italia-backend).
