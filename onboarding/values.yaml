@@ -15,14 +15,14 @@ onboarding:
     onboarding_port: "3000"
     onboarding_environment: "prod"
     onboarding_app_base_url: "https://onboarding.developers.italia.it"
-    onboarding_es_url: "http://elastic.developers.italia.it/indicepa_pec/_search"
+    onboarding_es_url: "https://elastic.developers.italia.it/indicepa_pec/_search"
     onboarding_smtp_port: "587"
     onboarding_smtp_secure: "false"
-    onboarding_email_from: "Test account"
-    onboarding_email_cc: "prova@prova.it"
-    onboarding_email_bcc: "prova@prova.it"
-    onboarding_email_override_recipient_addr: "prova@prova.it"
-    onboarding_email_subject: "Test"
+    onboarding_email_from: "Team per la Trasformazione Digitale <contatti@developers.italia.it>"
+    onboarding_email_cc: ""
+    onboarding_email_bcc: "contatti@developers.italia.it"
+    onboarding_email_override_recipient_addr: "pera@agid.gov.it"
+    onboarding_email_subject: "Onboarding Developers Italia"
 
   services:
     httpPort:
