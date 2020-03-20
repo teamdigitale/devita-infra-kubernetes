@@ -74,9 +74,9 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/acme-challenge-type: http01
     hosts:
-      - elastic.developers.italia.it
+      - elasticsearch.developers.italia.it
     path: /
     tls:
       - hosts:
-          - elastic.developers.italia.it
+          - elasticsearch.developers.italia.it
         secretName: elasticsearch-prod-tls
