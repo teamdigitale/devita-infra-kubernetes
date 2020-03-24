@@ -18,7 +18,6 @@ mountOptions:
   - cache=none
 parameters:
   skuName: Standard_LRS
-  kind: Managed
 
 ---
 
@@ -39,4 +38,3 @@ mountOptions:
   - cache=none
 parameters:
   skuName: Premium_LRS
-  kind: Managed
