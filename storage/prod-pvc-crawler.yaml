@@ -1,0 +1,14 @@
+---
+
+apiVersion: v1
+
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile-standard
+  resources:
+    requests:
+      storage: 1Gi

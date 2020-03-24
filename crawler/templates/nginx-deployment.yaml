@@ -1,0 +1,66 @@
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "crawler.fullname" . }}-nginx
+  labels:
+    app: {{ template "crawler.name" . }}
+    chart: {{ template "crawler.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.crawler.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "crawler.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "crawler.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        # Nginx container to dispay crawler public output files
+        - name: nginx
+          image: "{{ .Values.global.registry }}{{ .Values.crawler.images.nginx.repository }}:{{ tpl .Values.crawler.images.nginx.tag . }}"
+          imagePullPolicy: {{ .Values.crawler.images.nginx.pullPolicy }}
+
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: data
+              mountPath: /var/www/crawler
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.crawler.services.nginx.httpPort.containerPort }}
+              protocol: {{ .Values.crawler.services.nginx.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.crawler.resources.backend | indent 12 }}
+    {{- with .Values.crawler.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.crawler.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.crawler.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "crawler.fullname" . }}-nginx-configmap
+        - name: data
+          persistentVolumeClaim:
+            claimName: crawler

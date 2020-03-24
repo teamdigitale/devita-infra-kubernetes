@@ -5,15 +5,49 @@ global:
 
 crawler:
   images:
-    repository: docker.io/italia/developers-italia-backend
-    tag: latest
-    pullPolicy: Always
+    crawler:
+      repository: docker.io/italia/developers-italia-backend
+      tag: latest
+      pullPolicy: Always
+    nginx:
+      repository: docker.io/nginx
+      tag: 1.17.3-alpine
+      pullPolicy: IfNotPresent
 
   env:
     elastic_url: "http://developersitalia-master:9200"
     elastic_user: "elastic"
 
   cronjob_schedule: "0 0 * * *"
+
+  nginx_config: |
+    server {
+      listen 80;
+      server_name crawler.developers.italia.it;
+      root /var/www/crawler/output;
+    }
+
+  services:
+    nginx:
+      httpPort:
+        servicePort: 80
+        containerPort: 80
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    path: /
+    hosts:
+      - crawler.developers.italia.it
+    tls:
+      - hosts:
+          - crawler.developers.italia.it
+        secretName: crawler-prod-tls
 
   resources:
     # For each of the following objects, set limits
@@ -25,6 +59,8 @@ crawler:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
+    crawler: {}
+    nginx: {}
 
   nodeSelector: {}
 
