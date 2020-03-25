@@ -1,0 +1,79 @@
+apiVersion: v1
+
+kind: Service
+metadata:
+  name: custom-default-backend
+  namespace: ingress
+  labels:
+    app: custom-default-backend
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: custom-default-backend
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-default-backend-configmap
+  namespace: ingress
+  labels:
+    app: custom-default-backend
+data:
+  custom_error_handling.conf: |
+    server {
+      listen 80 default_server reuseport;
+
+      location / {
+        # Handle HTML requests
+        return 301 https://developers.italia.it/${http_x_code}.html;
+      }
+
+      location /nginx_status {
+        allow 127.0.0.1;
+        deny all;
+
+        access_log off;
+        stub_status on;
+      }
+
+      location /healthz {
+        return 200;
+      }
+    }
+
+---
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: custom-default-backend
+  namespace: ingress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: custom-default-backend
+    spec:
+      containers:
+      - name: custom-default-backend
+        image: docker.io/nginx:1.17.3-alpine
+
+        volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d
+            readOnly: true
+
+        ports:
+        - containerPort: 80
+
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: custom-default-backend-configmap

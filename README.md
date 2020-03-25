@@ -202,7 +202,13 @@ kubectl apply -f system/common-cert-manager-issuers.yaml
 The nginx ingress controller works as a reverse proxy, routing requests from the Internet to the applications living in the cluster. All applications DNS names are resolved to a single, public static IP address, that must be pre-provisioned on Azure.
 Before proceeding, make sure you have allocated the public, static IP address using Terraform, and that the same address is reflected in the `nginx-ingress-custom.yaml` file.
 
-To install the nginx ingress run:
+We use a custom NGINX deployment to handle errors returned by NGINX, overriding the default error backend behavior. Double check the [NGINX configuration](system/common-nginx-custom-default-backend.yaml). Then deploy it:
+
+```shell
+kubectl apply -f system/common-nginx-custom-default-backend.yaml
+```
+
+Finally, install the NGINX ingress, running:
 
 ```shell
 kubectl create namespace ingress

@@ -11,8 +11,10 @@ controller:
   service:
     externalTrafficPolicy: "Local"
     loadBalancerIP: 51.124.93.192
+  defaultBackendService: ingress/custom-default-backend
+  config:
+    custom-http-errors: 403,404,500
 defaultBackend:
-  nodeSelector:
-    beta.kubernetes.io/os: linux
+  enabled: false
 rbac:
   create: "true"
