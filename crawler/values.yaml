@@ -24,7 +24,7 @@ crawler:
     server {
       listen 80;
       server_name crawler.developers.italia.it;
-      root /var/www/crawler/output;
+      root /var/www/crawler;
     }
 
   services:

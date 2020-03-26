@@ -15,6 +15,9 @@ spec:
           labels:
             app: "{{ template "crawler.fullname" . }}"
         spec:
+          securityContext:
+            fsGroup: 1000
+
           containers:
           - name: {{ template "crawler.fullname" . }}
             image: "{{ .Values.global.registry }}{{ .Values.crawler.images.crawler.repository }}:{{ tpl .Values.crawler.images.crawler.tag . }}"
@@ -30,6 +33,9 @@ spec:
               readOnly: true
             - name: data
               mountPath: /var/crawler/data
+              readOnly: false
+            - name: output
+              mountPath: /var/crawler/output
               readOnly: false
 
             resources:
@@ -53,4 +59,7 @@ spec:
                 path: domains.yml
           - name: data
             persistentVolumeClaim:
-              claimName: crawler
+              claimName: crawler-data
+          - name: output
+            persistentVolumeClaim:
+              claimName: crawler-output

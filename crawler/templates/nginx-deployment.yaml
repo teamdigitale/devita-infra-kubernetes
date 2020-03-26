@@ -63,4 +63,4 @@ spec:
             name: {{ template "crawler.fullname" . }}-nginx-configmap
         - name: data
           persistentVolumeClaim:
-            claimName: crawler
+            claimName: crawler-output

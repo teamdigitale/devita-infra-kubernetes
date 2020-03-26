@@ -4,11 +4,26 @@ apiVersion: v1
 
 kind: PersistentVolumeClaim
 metadata:
-  name: crawler
+  name: crawler-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: managed-premium-custom
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+
+apiVersion: v1
+
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler-output
 spec:
   accessModes:
   - ReadWriteMany
-  storageClassName: azurefile-premium
+  storageClassName: azurefile-standard
   resources:
     requests:
-      storage: 100Gi
+      storage: 1Gi
