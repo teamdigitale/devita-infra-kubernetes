@@ -21,13 +21,13 @@ esConfig:
     http.cors.allow-origin: "*"
     http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
     http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length
-    logger.level: debug
+    logger.level: info
   roles.yml : |
     readonly:
       run_as: [ 'elastic' ]
       cluster: [ 'monitor' ]
       indices:
-        - names: [ 'indicepa_pec' ]
+        - names: [ 'indicepa_pec', 'jekyll*', 'publiccodes', 'administrations' ]
           privileges: [ 'read' ]
   log4j2.properties: |
     status = error
