@@ -1,0 +1,20 @@
+---
+
+apiVersion: v1
+
+kind: Service
+metadata:
+  name: {{ template "publiccode-validator.fullname" . }}-http
+  labels:
+    app: {{ template "publiccode-validator.name" . }}
+    chart: {{ template "publiccode-validator.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.publiccode_validator.services.httpPort.type }}
+  ports:
+    - name: http
+{{ toYaml .Values.publiccode_validator.services.httpPort | indent 6 }}
+  selector:
+    app: {{ template "publiccode-validator.name" . }}
+    release: {{ .Release.Name }}

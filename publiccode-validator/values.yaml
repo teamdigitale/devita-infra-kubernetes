@@ -1,0 +1,49 @@
+---
+
+global:
+  registry: ''
+
+publiccode_validator:
+  replicaCount: 1
+
+  images:
+    repository: docker.io/italia/publiccode-validator
+    tag: release-0.0.2
+    pullPolicy: IfNotPresent
+
+  services:
+    httpPort:
+      port: 5000
+
+  ingress:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    hosts:
+      - publiccode-validator.developers.italia.it
+    path: /
+    tls:
+      - hosts:
+          - publiccode-validator.developers.italia.it
+        secretName: publiccode-validator-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}

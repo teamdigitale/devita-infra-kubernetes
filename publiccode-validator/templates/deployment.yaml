@@ -1,0 +1,60 @@
+---
+
+apiVersion: apps/v1beta2
+
+kind: Deployment
+metadata:
+  name: {{ template "publiccode-validator.fullname" . }}
+  labels:
+    app: {{ template "publiccode-validator.name" . }}
+    chart: {{ template "publiccode-validator.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.publiccode_validator.replicaCount }}
+  {{- if .Values.publiccode_validator.strategy }}
+  {{- with .Values.publiccode_validator.strategy }}
+  strategy:
+    type: {{ toYaml .type }}
+    rollingUpdate:
+      maxUnavailable: {{ toYaml .rollingUpdate.maxUnavailable }}
+      maxSurge: {{ toYaml .rollingUpdate.maxSurge }}
+  {{- end }}
+  {{- end }}
+  revisionHistoryLimit: {{ .Values.publiccode_validator.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ template "publiccode-validator.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "publiccode-validator.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        - name: publiccode-validator
+          image: "{{ .Values.global.registry }}{{ .Values.publiccode_validator.images.repository }}:{{ tpl .Values.publiccode_validator.images.tag . }}"
+          imagePullPolicy: {{ .Values.publiccode_validator.images.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.publiccode_validator.services.httpPort.port }}
+              protocol: {{ .Values.publiccode_validator.services.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.publiccode_validator.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.publiccode_validator.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.publiccode_validator.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
