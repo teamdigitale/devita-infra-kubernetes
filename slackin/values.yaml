@@ -1,0 +1,49 @@
+---
+
+global:
+  registry: ''
+
+slackin:
+  replicaCount: 1
+
+  images:
+    repository: docker.io/italia/developers-italia-slackin
+    tag: latest
+    pullPolicy: Always
+
+  services:
+    httpPort:
+      port: 3000
+
+  ingress:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    hosts:
+      - slack.developers.italia.it
+    path: /
+    tls:
+      - hosts:
+          - slack.developers.italia.it
+        secretName: slackin-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}

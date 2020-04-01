@@ -1,0 +1,43 @@
+---
+
+{{- if .Values.slackin.ingress.enabled -}}
+{{- $fullName := include "slackin.fullname" . -}}
+{{- $servicePort := .Values.slackin.services.httpPort.port -}}
+{{- $ingressPath := .Values.slackin.ingress.path -}}
+
+apiVersion: extensions/v1beta1
+
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app: {{ template "slackin.name" . }}
+    chart: {{ template "slackin.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.slackin.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.slackin.ingress.tls }}
+  tls:
+  {{- range .Values.slackin.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.slackin.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ $fullName }}-http
+              servicePort: {{ $servicePort }}
+  {{- end }}
+{{- end }}
