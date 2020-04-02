@@ -34,6 +34,9 @@ spec:
       annotations:
         timestamp: "{{ date "20060102150405" .Release.Time }}"
     spec:
+      securityContext:
+        fsGroup: 1001
+
       containers:
         - name: onboarding
           image: "{{ .Values.global.registry }}{{ .Values.onboarding.images.repository }}:{{ tpl .Values.onboarding.images.tag . }}"
@@ -71,7 +74,7 @@ spec:
 
           volumeMounts:
             - name: db
-              mountPath: /private/data
+              mountPath: /usr/src/app/private/data
               readOnly: false
 
           {{- if .Values.onboarding.livenessProbe }}
