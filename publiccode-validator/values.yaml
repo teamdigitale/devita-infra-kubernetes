@@ -8,8 +8,8 @@ publiccode_validator:
 
   images:
     repository: docker.io/italia/publiccode-validator
-    tag: release-0.0.2
-    pullPolicy: IfNotPresent
+    tag: latest
+    pullPolicy: Always
 
   services:
     httpPort:
