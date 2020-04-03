@@ -143,13 +143,13 @@ kubectl create namespace azurekeyvault
 
 helm install \
     --set installCrd=false \
-    --version 0.1.23 \
+    --version 1.0.2 \
     --namespace azurekeyvault \
     key-vault-controller \
     spv-charts/azure-key-vault-controller
 
 helm install \
-    --version 0.1.5 \
+    --version 1.0.2 \
     --namespace azurekeyvault \
     key-vault-env-injector \
     spv-charts/azure-key-vault-env-injector
