@@ -1,0 +1,29 @@
+---
+
+# These mods are needed for AKS and to configure
+# the alert manager. More info here:
+# https://atouati.com/posts/2019/12/aks-monitoring-with-prometheus/
+
+kubelet:
+  enabled: true
+  serviceMonitor:
+    https: false
+
+# Disabling scraping of Master Nodes Components
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+alertmanager:
+  alertmanagerSpec:
+    externalUrl: "http://localhost:9093"
+    useExistingSecret: true
+    configSecret: prometheus-secrets
