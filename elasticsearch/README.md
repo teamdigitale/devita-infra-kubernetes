@@ -40,3 +40,15 @@ helm repo update
 
 helm install -f custom.yaml --version 7.6.1 elasticsearch elastic/elasticsearch
 ```
+
+## Elasticsearch Prometheus Exporter
+
+In order to expose information about the cluster to the monitoring system (Prometheus) for scraping, a third-party exporter is needed. Also the elasticsearch-exporter comes with its own [official helm-chart](https://github.com/helm/charts/blob/master/stable/elasticsearch-exporter).
+
+An extra [customization file](custom-exporter.yaml) is provided, in order to adapt the generic values to the deployment needs.
+
+To install the Elasticsearch Prometheus exporter, run:
+
+```shell
+helm install -f custom-exporter.yaml --version 3.0.0 elasticsearch-exporter stable/elasticsearch-exporter
+```
