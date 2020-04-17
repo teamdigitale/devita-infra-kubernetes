@@ -27,3 +27,7 @@ alertmanager:
     externalUrl: "http://localhost:9093"
     useExistingSecret: true
     configSecret: prometheus-secrets
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
