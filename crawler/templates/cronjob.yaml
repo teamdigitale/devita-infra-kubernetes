@@ -48,7 +48,7 @@ spec:
               - name: ELASTIC_PWD
                 value: crawler-secrets@azurekeyvault?elastic-pass
 
-          restartPolicy: OnFailure
+          restartPolicy: Never
 
           volumes:
           - name: configs
