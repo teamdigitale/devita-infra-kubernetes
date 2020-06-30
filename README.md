@@ -171,6 +171,8 @@ Each chart that makes use of one or more secrets already contains an *azure-key-
 
 #### Deploy Velero for backups
 
+[Velero](https://velero.io) and its [Azure plugin](https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure) are used to backup Kubernetes resources, including taking volume snapshots, to an Azure blob storage account.
+
 Make sure the service principal of Kubernetes (under registered applications in your [Azure Portal](https://portal.azure.com)) has a secret associated. Copy both the application client id and the secret. You'll need them in few minutes.
 
 Create the *backups* namespace:
@@ -183,7 +185,7 @@ Edit the template variables below (*YOUR_SERVICE_PRINCIPAL_CLIENT_ID* and *YOUR_
 
 ```json
 {
-    "cloud": "AZURE_SUBSCRIPTION_ID=d30b533f-c88b-45ec-867e-8e321aa0b03f\nAZURE_TENANT_ID=f7f7d6c7-92de-488e-b37e-8963207c7b86\nAZURE_CLIENT_ID=YOUR_SERVICE_PRINCIPAL_CLIENT_ID\nAZURE_CLIENT_SECRET=YOUR_SERVICE_PRINCIPAL_CLIENT_SECRET\nAZURE_RESOURCE_GROUP=devita-prod-rg\nAZURE_CLOUD_NAME=AzurePublicCloud"
+    "cloud": "AZURE_SUBSCRIPTION_ID=d30b533f-c88b-45ec-867e-8e321aa0b03f\nAZURE_TENANT_ID=f7f7d6c7-92de-488e-b37e-8963207c7b86\nAZURE_CLIENT_ID=YOUR_SERVICE_PRINCIPAL_CLIENT_ID\nAZURE_CLIENT_SECRET=YOUR_SERVICE_PRINCIPAL_CLIENT_SECRET\nAZURE_RESOURCE_GROUP=MC_devita-prod-rg_devita-prod-aks-k8s-01_westeurope\nAZURE_CLOUD_NAME=AzurePublicCloud"
 }
 ```
 
@@ -203,7 +205,6 @@ helm repo update
 # Install/upgrade Velero
 helm upgrade \
     -f system/prod-velero-custom.yaml \
-    --set-file credentials.secretContents.cloud=/Users/luca/Desktop/credentials-velero \
     --namespace backups \
     --install \
     velero vmware-tanzu/velero
@@ -213,6 +214,20 @@ Enable backups for all namespaces:
 
 ```shell
 kubectl apply -f system/common-velero-backup.yaml
+```
+
+List active schedules and backups:
+
+```shell
+kubectl get schedules -n backups
+kubectl get backups -n backups
+```
+
+Describe a backup and see its logs:
+
+```shell
+velero backup describe -n backups {backup-name}
+velero backup logs -n backups {backup-name}
 ```
 
 #### Deploy the cert-manager    

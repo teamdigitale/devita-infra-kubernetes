@@ -134,4 +134,5 @@ spec:
     storageLocation: default
     volumeSnapshotLocations:
       - default
-    ttl: 1440h0m0s
+    # Preserve monthly backups for a year
+    ttl: 9640h0m0s
