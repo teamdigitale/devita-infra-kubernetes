@@ -171,6 +171,8 @@ Each chart that makes use of one or more secrets already contains an *azure-key-
 
 #### Deploy Velero for backups
 
+Make sure the service principal of Kubernetes (under registered applications in your [Azure Portal](https://portal.azure.com)) has a secret associated. Copy both the application client id and the secret. You'll need them in few minutes.
+
 Create the *backups* namespace:
 
 ```shell
