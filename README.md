@@ -169,6 +169,50 @@ Each chart that makes use of one or more secrets already contains an *azure-key-
 
 * Moreover, environment variables are imported in the *deployment.yaml* files with the value format `name-of-the-variable@azurekeyvault`
 
+#### Deploy Velero for backups
+
+Create the *backups* namespace:
+
+```shell
+kubectl create namespace backups
+```
+
+Edit the template variables below (*YOUR_SERVICE_PRINCIPAL_CLIENT_ID* and *YOUR_SERVICE_PRINCIPAL_SECRET*) and create a secret in the your Azure Keyvault called *k8s-secrets-velero*:
+
+```json
+{
+    "cloud": "AZURE_SUBSCRIPTION_ID=d30b533f-c88b-45ec-867e-8e321aa0b03f\nAZURE_TENANT_ID=f7f7d6c7-92de-488e-b37e-8963207c7b86\nAZURE_CLIENT_ID=YOUR_SERVICE_PRINCIPAL_CLIENT_ID\nAZURE_CLIENT_SECRET=YOUR_SERVICE_PRINCIPAL_CLIENT_SECRET\nAZURE_RESOURCE_GROUP=devita-prod-rg\nAZURE_CLOUD_NAME=AzurePublicCloud"
+}
+```
+
+Synchronize the Azure Keyvault secret with the local Kubernetes instance:
+
+```shell
+kubectl apply -f system/prod-velero-secrets.yaml
+```
+
+Install Velero:
+
+```shell
+# Add local Velero Helm repository
+helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
+helm repo update
+
+# Install/upgrade Velero
+helm upgrade \
+    -f system/prod-velero-custom.yaml \
+    --set-file credentials.secretContents.cloud=/Users/luca/Desktop/credentials-velero \
+    --namespace backups \
+    --install \
+    velero vmware-tanzu/velero
+```
+
+Enable backups for all namespaces:
+
+```shell
+kubectl apply -f system/common-velero-backup.yaml
+```
+
 #### Deploy the cert-manager    
 
 The cert-manager is a Kubernetes component that takes care of adding and renewing TLS certificates for any virtual host specified in the ingress, through the integration with some providers (i.e. letsencrypt).

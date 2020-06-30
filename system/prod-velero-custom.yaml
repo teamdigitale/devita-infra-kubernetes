@@ -1,0 +1,32 @@
+---
+
+configuration:
+  provider: azure
+  backupStorageLocation:
+    name: default
+    bucket: devita-prod-sc-backups
+    config:
+      resourceGroup: devita-prod-rg
+      storageAccount: devitaprodsabackups
+      subscriptionId: d30b533f-c88b-45ec-867e-8e321aa0b03f
+  volumeSnapshotLocation:
+    name: default
+    bucket: devita-prod-sc-backups
+    resourceGroup: devita-prod-rg
+    storageAccount: devitaprodsabackups
+    subscriptionId: d30b533f-c88b-45ec-867e-8e321aa0b03f
+
+image:
+  repository: velero/velero
+  tag: v1.4.0
+  pullPolicy: IfNotPresent
+
+initContainers:
+  - name: velero-plugin-for-microsoft-azure
+    image: velero/velero-plugin-for-microsoft-azure:v1.1.0
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+credentials:
+  existingSecret: velero-secrets
