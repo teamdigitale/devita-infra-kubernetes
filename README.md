@@ -216,18 +216,22 @@ Enable backups for all namespaces:
 kubectl apply -f system/common-velero-backup.yaml
 ```
 
-List active schedules and backups:
+List active schedules and backups with kubectl:
 
 ```shell
 kubectl get schedules -n backups
 kubectl get backups -n backups
 ```
 
-Describe a backup and see its logs:
+Install Velero client and perform common tasks:
 
 ```shell
+brew install velero
+
+velero backup get
 velero backup describe -n backups {backup-name}
 velero backup logs -n backups {backup-name}
+velero backup delete -n backups {backup-name}
 ```
 
 #### Deploy the cert-manager    
