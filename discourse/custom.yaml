@@ -1,0 +1,38 @@
+# Discourse setup - custom.yaml
+
+persistence:
+  existingClaim: discourse-data
+
+service:
+  type: ClusterIP
+
+discourse:
+  host: forum.italia.it
+  siteName: "Forum Italia"
+  username: dipartimentoinnovazione
+  existingSecret: discourse-secrets
+  skipInstall: true
+
+postgresql:
+  existingSecret: discourse-secrets
+  persistence:
+    existingClaim: discourse-postgresql
+
+redis:
+  existingSecret: discourse-secrets
+  existingSecretPasswordKey: redis-password
+  persistence:
+    existingClaim: discourse-redis
+
+ingress:
+  enabled: "true"
+  # certManager: "true"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 500m
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # cert-manager.io/acme-challenge-type: http01
+  hostname: forum.italia.it
+  # tls: "true"
