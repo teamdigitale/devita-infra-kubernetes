@@ -1,0 +1,59 @@
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "slack-registration.fullname" . }}-nginx
+  labels:
+    app: {{ template "slack-registration.name" . }}
+    chart: {{ template "slack-registration.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.slack_registration.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "slack-registration.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "slack-registration.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.global.registry }}{{ .Values.slack_registration.images.nginx.repository }}:{{ tpl .Values.slack_registration.images.nginx.tag . }}"
+          imagePullPolicy: {{ .Values.slack_registration.images.nginx.pullPolicy }}
+
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.slack_registration.services.nginx.httpPort.containerPort }}
+              protocol: {{ .Values.slack_registration.services.nginx.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.slack_registration.resources.backend | indent 12 }}
+    {{- with .Values.slack_registration.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.slack_registration.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.slack_registration.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "slack-registration.fullname" . }}-nginx-configmap

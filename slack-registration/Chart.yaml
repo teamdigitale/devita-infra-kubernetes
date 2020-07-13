@@ -1,0 +1,9 @@
+---
+
+apiVersion: v1
+
+name: slack-registration
+description: Nginx performing redirects to Slack registration link.
+
+version: 0.1.0
+appVersion: "1.17.3-alpine"
