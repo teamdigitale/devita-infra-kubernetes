@@ -11,7 +11,7 @@ discourse:
   siteName: "Forum Italia"
   username: dipartimentoinnovazione
   existingSecret: discourse-secrets
-  skipInstall: true
+  skipInstall: no
 
 postgresql:
   existingSecret: discourse-secrets
@@ -19,6 +19,7 @@ postgresql:
     existingClaim: discourse-postgresql
 
 redis:
+  usePassword: true
   existingSecret: discourse-secrets
   existingSecretPasswordKey: redis-password
   persistence:
