@@ -16,7 +16,7 @@ slack_registration:
       listen [::]:80;
       server_name slack.developers.italia.it;
 
-     location / {
+      location /badge.svg {
         return 301 https://img.shields.io/badge/slack-get%20invite-blue.svg?logo=slack;
       }
 
