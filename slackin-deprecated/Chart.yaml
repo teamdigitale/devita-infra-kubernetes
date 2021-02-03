@@ -1,9 +1,0 @@
----
-
-apiVersion: v1
-
-name: slackin
-description: Slackin for Developers Italia.
-
-version: 0.1.0
-appVersion: "latest"
