@@ -61,13 +61,11 @@ Then, access http://localhost:9000
 ## Access Alertmanager
 
 ```shell
-alertmanager_pod=$(kubectl get pods --namespace monitoring -l "app=alertmanager" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace monitoring port-forward $alertmanager_pod 9093
+kubectl port-forward --namespace monitoring svc/prometheus-prometheus-oper-alertmanager 9093
 ```
 
 ## Access Grafana
 
 ```shell
-graphana_pod=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace monitoring port-forward $graphana_pod 3000
+kubectl port-forward --namespace monitoring svc/prometheus-grafana 3000:80
 ```
