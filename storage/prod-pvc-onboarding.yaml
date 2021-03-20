@@ -5,6 +5,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: onboarding
+  labels:
+    # Backup this PersistentVolumeClaim, we can't regenerate
+    # its data from scratch.
+    velero-backup: "true"
 spec:
   accessModes:
   - ReadWriteOnce
