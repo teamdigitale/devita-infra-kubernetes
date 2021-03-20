@@ -53,15 +53,15 @@ helm upgrade \
 ## Access Prometheus
 
 ```shell
-kubectl -n monitoring port-forward prometheus-prometheus-prometheus-oper-prometheus-0 9090
+kubectl -n monitoring port-forward prometheus-prometheus-kube-prometheus-prometheus-0 9090
 ```
 
-Then, access http://localhost:9000
+Then, access http://localhost:9090
 
 ## Access Alertmanager
 
 ```shell
-kubectl port-forward --namespace monitoring svc/prometheus-prometheus-oper-alertmanager 9093
+kubectl port-forward --namespace monitoring svc/prometheus-kube-prometheus-alertmanager 9093
 ```
 
 ## Access Grafana
