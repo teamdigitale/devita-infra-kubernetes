@@ -38,10 +38,9 @@ spec:
     # cluster-scoped) would also be backed up.
     includeClusterResources: null
     # Individual objects must match this label selector to be included in the scheduled backup. Optional.
-    # labelSelector:
-    #   matchLabels:
-    #     app: velero
-    #     component: server
+    labelSelector:
+      matchLabels:
+        velero-backup: "true"
     # Whether or not to snapshot volumes. This only applies to PersistentVolumes for Azure, GCE, and
     # AWS. Valid values are true, false, and null/unset. If unset, Velero performs snapshots as long as
     # a persistent volume provider is configured for Velero.
