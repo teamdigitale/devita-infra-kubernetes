@@ -15,10 +15,7 @@ spec:
   {{- if .Values.onboarding.strategy }}
   {{- with .Values.onboarding.strategy }}
   strategy:
-    type: {{ toYaml .type }}
-    rollingUpdate:
-      maxUnavailable: {{ toYaml .rollingUpdate.maxUnavailable }}
-      maxSurge: {{ toYaml .rollingUpdate.maxSurge }}
+    type: Recreate
   {{- end }}
   {{- end }}
   revisionHistoryLimit: {{ .Values.onboarding.revisionHistoryLimit }}
