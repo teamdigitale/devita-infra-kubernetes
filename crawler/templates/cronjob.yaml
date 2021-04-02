@@ -23,8 +23,7 @@ spec:
             image: "{{ .Values.global.registry }}{{ .Values.crawler.images.crawler.repository }}:{{ tpl .Values.crawler.images.crawler.tag . }}"
             imagePullPolicy: {{ .Values.crawler.images.crawler.pullPolicy }}
 
-            command: ["./wait-for-it.sh"]
-            args: ["$(ELASTIC_URL)", "-t", "300", "--", "./start.sh"]
+            command: ["./start.sh"]
 
             volumeMounts:
             - name: configs
