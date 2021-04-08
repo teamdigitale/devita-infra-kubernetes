@@ -69,10 +69,12 @@ spec:
             - name: ONBOARDING_SMTP_PASSWORD
               value: onboarding-secrets@azurekeyvault?smtp-password
 
+          {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
           volumeMounts:
             - name: db
               mountPath: /usr/src/app/private/data
               readOnly: false
+          {{- end }}
 
           {{- if .Values.onboarding.livenessProbe }}
           {{- with .Values.onboarding.livenessProbe }}
@@ -107,7 +109,9 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
 
+      {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
       volumes:
         - name: db
           persistentVolumeClaim:
             claimName: onboarding
+      {{- end }}

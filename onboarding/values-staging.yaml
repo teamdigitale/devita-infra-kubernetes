@@ -1,0 +1,64 @@
+---
+
+global:
+  registry: ''
+
+onboarding:
+  replicaCount: 1
+
+  images:
+    repository: docker.io/italia/developers-italia-onboarding
+    tag: latest
+    pullPolicy: Always
+
+  deployEnvironment: "staging"
+
+  env:
+    onboarding_port: "3000"
+    onboarding_environment: "staging"
+    onboarding_app_base_url: "https://staging-onboarding.developers.italia.it"
+    onboarding_es_url: "https://elasticsearch.developers.italia.it/indicepa_pec/_search"
+    onboarding_smtp_port: "587"
+    onboarding_smtp_secure: "false"
+    onboarding_email_from: "Team per la Trasformazione Digitale <contatti@developers.italia.it>"
+    onboarding_email_cc: ""
+    onboarding_email_bcc: "contatti@developers.italia.it"
+    onboarding_email_override_recipient_addr: "contatti@developers.italia.it"
+    onboarding_email_subject: "[staging] Onboarding Developers Italia"
+
+  services:
+    httpPort:
+      port: 3000
+
+  ingress:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    hosts:
+      - staging-onboarding.developers.italia.it
+    path: /
+    tls:
+      - hosts:
+          - staging-onboarding.developers.italia.it
+        secretName: onboarding-staging-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
