@@ -1,0 +1,64 @@
+---
+
+global:
+  registry: ''
+
+redirects_design_italia_it:
+  images:
+    nginx:
+      repository: docker.io/nginx
+      tag: 1.17.3-alpine
+      pullPolicy: IfNotPresent
+
+  nginx_config: |
+    server {
+      listen 80;
+      listen [::]:80;
+      server_name design.italia.it designer.italia.it;
+
+      location / {
+        return 301 https://designers.italia.it$request_uri;
+      }
+    }
+
+  services:
+    nginx:
+      httpPort:
+        servicePort: 80
+        containerPort: 80
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    path: /
+    hosts:
+      - design.italia.it
+      - designer.italia.it
+    tls:
+      - hosts:
+          - design.italia.it
+          - designer.italia.it
+        secretName: design-italia-it-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    nginx: {}
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
