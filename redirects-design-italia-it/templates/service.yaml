@@ -1,0 +1,20 @@
+---
+
+apiVersion: v1
+
+kind: Service
+metadata:
+  name: {{ template "redirects-design-italia-it.fullname" . }}
+  labels:
+    app: {{ template "redirects-design-italia-it.name" . }}
+    chart: {{ template "redirects-design-italia-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.redirects_design_italia_it.services.nginx.type }}
+  ports:
+    - port: {{ .Values.redirects_design_italia_it.services.nginx.httpPort.servicePort }}
+      targetPort: {{ .Values.redirects_design_italia_it.services.nginx.httpPort.containerPort }}
+  selector:
+    app: {{ template "redirects-design-italia-it.name" . }}
+    release: {{ .Release.Name }}
