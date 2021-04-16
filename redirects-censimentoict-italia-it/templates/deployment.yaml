@@ -1,0 +1,59 @@
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "redirects-censimentoict-italia-it.fullname" . }}-nginx
+  labels:
+    app: {{ template "redirects-censimentoict-italia-it.name" . }}
+    chart: {{ template "redirects-censimentoict-italia-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.redirects_censimentoict_italia_it.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "redirects-censimentoict-italia-it.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "redirects-censimentoict-italia-it.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.global.registry }}{{ .Values.redirects_censimentoict_italia_it.images.nginx.repository }}:{{ tpl .Values.redirects_censimentoict_italia_it.images.nginx.tag . }}"
+          imagePullPolicy: {{ .Values.redirects_censimentoict_italia_it.images.nginx.pullPolicy }}
+
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.redirects_censimentoict_italia_it.services.nginx.httpPort.containerPort }}
+              protocol: {{ .Values.redirects_censimentoict_italia_it.services.nginx.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.redirects_censimentoict_italia_it.resources.backend | indent 12 }}
+    {{- with .Values.redirects_censimentoict_italia_it.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.redirects_censimentoict_italia_it.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.redirects_censimentoict_italia_it.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "redirects-censimentoict-italia-it.fullname" . }}-nginx-configmap
