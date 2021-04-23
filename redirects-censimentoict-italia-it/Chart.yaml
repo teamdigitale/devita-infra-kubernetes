@@ -1,0 +1,8 @@
+---
+
+apiVersion: v1
+
+name: redirects-censimentoict-italia-it
+description: Nginx performing redirects for censimentoict.italia.it.
+
+version: 0.2.0
