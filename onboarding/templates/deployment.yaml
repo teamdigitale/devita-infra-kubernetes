@@ -10,6 +10,27 @@ metadata:
     chart: {{ template "onboarding.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    timestamp: "{{ date "20060102150405" .Release.Time }}"
+
+    # Keel will automatically update this Deployment when a new Docker image
+    # is pushed to DockerHub.
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@every 1m"
+
+    {{- if eq (default "production" .Values.onboarding.deployEnvironment) "staging" }}
+    {{- /*
+    When in staging, update when the same image tag (master) is pushed
+    */}}
+    keel.sh/policy: force
+    keel.sh/match-tag: "true"
+    {{- else }}
+    {{- /*
+    When in production, update on new semver tag
+    */}}
+    keel.sh/policy: patch
+    {{- end }}
+
 spec:
   replicas: {{ .Values.onboarding.replicaCount }}
   {{- if .Values.onboarding.strategy }}
