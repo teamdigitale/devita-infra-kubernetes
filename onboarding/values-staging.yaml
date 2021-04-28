@@ -8,7 +8,7 @@ onboarding:
 
   images:
     repository: docker.io/italia/developers-italia-onboarding
-    tag: latest
+    tag: master
     pullPolicy: Always
 
   deployEnvironment: "staging"
