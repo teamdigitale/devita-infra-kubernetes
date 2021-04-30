@@ -286,6 +286,34 @@ helm install \
     stable/nginx-ingress
 ```
 
+#### Deploy Keel to automate deployments
+
+[Keel](https://keel.sh/) automatically updates application deployments when a
+new Docker image is available.
+
+It'll send messages to `#prj_swat` when deployments are updated, so it'll need
+the Slack token for the `keel-devita` Slack app.
+
+```shell
+# Add repo and update dependencies
+helm repo add keel-charts https://charts.keel.sh
+helm repo update
+
+# Install keel
+helm install \
+    --set helmProvider.enabled="false"
+    --set slack.enabled="true" \
+    --set slack.botName="keel-devita" \
+    --set slack.channel="prj_swat" \
+    --set slack.token="KEEL_DEVITA_APP_TOKEN" \
+    --namespace=kube-system \
+    keel \
+    keel/keel
+```
+
+Note that Helm support is disabled because, as of today, it doesn't look very
+stable.
+
 ### Deploy applications
 
 Applications are packaged using helm charts.
