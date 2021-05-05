@@ -13,7 +13,7 @@ controller:
     loadBalancerIP: 51.124.93.192
   defaultBackendService: ingress/custom-default-backend
   config:
-    custom-http-errors: 403,404,500
+    custom-http-errors: 403,500
 defaultBackend:
   enabled: false
 rbac:
