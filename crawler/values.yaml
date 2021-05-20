@@ -11,7 +11,7 @@ crawler:
       pullPolicy: Always
     nginx:
       repository: docker.io/nginx
-      tag: 1.17.3-alpine
+      tag: 1.20.0-alpine
       pullPolicy: IfNotPresent
 
   env:
@@ -39,6 +39,8 @@ crawler:
       kubernetes.io/ingress.class: nginx
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-methods: "GET, OPTIONS"
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/acme-challenge-type: http01
     path: /
