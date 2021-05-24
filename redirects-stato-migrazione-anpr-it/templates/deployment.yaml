@@ -1,0 +1,59 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "redirects-stato-migrazione-anpr-it.fullname" . }}-nginx
+  labels:
+    app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+    chart: {{ template "redirects-stato-migrazione-anpr-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.redirects_stato_migrazione_anpr_it.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.global.registry }}{{ .Values.redirects_stato_migrazione_anpr_it.images.nginx.repository }}:{{ tpl .Values.redirects_stato_migrazione_anpr_it.images.nginx.tag . }}"
+          imagePullPolicy: {{ .Values.redirects_stato_migrazione_anpr_it.images.nginx.pullPolicy }}
+
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.redirects_stato_migrazione_anpr_it.services.nginx.httpPort.containerPort }}
+              protocol: {{ .Values.redirects_stato_migrazione_anpr_it.services.nginx.httpPort.protocol }}
+
+          resources:
+{{ toYaml .Values.redirects_stato_migrazione_anpr_it.resources.backend | indent 12 }}
+    {{- with .Values.redirects_stato_migrazione_anpr_it.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.redirects_stato_migrazione_anpr_it.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.redirects_stato_migrazione_anpr_it.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "redirects-stato-migrazione-anpr-it.fullname" . }}-nginx-configmap

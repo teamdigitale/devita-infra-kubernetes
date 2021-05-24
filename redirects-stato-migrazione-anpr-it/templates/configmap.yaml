@@ -1,0 +1,13 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "redirects-stato-migrazione-anpr-it.fullname" . }}-nginx-configmap
+  labels:
+    app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+    chart: {{ template "redirects-stato-migrazione-anpr-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  cloud_italia_it.conf: {{ toYaml .Values.redirects_stato_migrazione_anpr_it.nginx_config | indent 4 }}

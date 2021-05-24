@@ -1,0 +1,20 @@
+---
+
+apiVersion: v1
+
+kind: Service
+metadata:
+  name: {{ template "redirects-stato-migrazione-anpr-it.fullname" . }}
+  labels:
+    app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+    chart: {{ template "redirects-stato-migrazione-anpr-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.redirects_stato_migrazione_anpr_it.services.nginx.type }}
+  ports:
+    - port: {{ .Values.redirects_stato_migrazione_anpr_it.services.nginx.httpPort.servicePort }}
+      targetPort: {{ .Values.redirects_stato_migrazione_anpr_it.services.nginx.httpPort.containerPort }}
+  selector:
+    app: {{ template "redirects-stato-migrazione-anpr-it.name" . }}
+    release: {{ .Release.Name }}

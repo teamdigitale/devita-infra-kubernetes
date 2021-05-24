@@ -1,0 +1,8 @@
+---
+
+apiVersion: v1
+
+name: redirects-stato-migrazione-anpr-it
+description: Nginx performing redirect for stato-migrazione.anpr.it
+
+version: 0.1.0

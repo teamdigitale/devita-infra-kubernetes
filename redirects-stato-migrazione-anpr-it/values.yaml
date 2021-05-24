@@ -1,0 +1,62 @@
+---
+
+global:
+  registry: ''
+
+redirects_stato_migrazione_anpr_it:
+  images:
+    nginx:
+      repository: docker.io/nginx
+      tag: 1.20.0-alpine
+      pullPolicy: IfNotPresent
+
+  nginx_config: |
+    server {
+      listen 80;
+      listen [::]:80;
+      server_name stato-migrazione.anpr.it;
+
+      location / {
+        return 301 https://www.anpr.interno.it/AnprStatsWeb/;
+      }
+    }
+
+  services:
+    nginx:
+      httpPort:
+        servicePort: 80
+        containerPort: 80
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    path: /
+    hosts:
+      - stato-migrazione.anpr.it
+    tls:
+      - hosts:
+          - stato-migrazione.anpr.it
+        secretName: stato-migrazione-anpr-it-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    nginx: {}
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
