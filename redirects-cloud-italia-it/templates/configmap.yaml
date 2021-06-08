@@ -1,0 +1,13 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "redirects-cloud-italia-it.fullname" . }}-nginx-configmap
+  labels:
+    app: {{ template "redirects-cloud-italia-it.name" . }}
+    chart: {{ template "redirects-cloud-italia-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  cloud_italia_it.conf: {{ toYaml .Values.redirects_cloud_italia_it.nginx_config | indent 4 }}

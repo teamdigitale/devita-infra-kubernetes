@@ -1,0 +1,124 @@
+---
+
+global:
+  registry: ''
+
+redirects_cloud_italia_it:
+  images:
+    nginx:
+      repository: docker.io/nginx
+      tag: 1.17.3-alpine
+      pullPolicy: IfNotPresent
+
+  nginx_config: |
+    server {
+      listen 80;
+      listen [::]:80;
+      server_name cloud.italia.it;
+
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header X-Frame-Options "SAMEORIGIN";
+      client_max_body_size 2M;
+
+      root /var/www/cloud.italia.it;
+      index index.html index.htm;
+
+      # The marketplace section of the site is a different
+      # web application managed by AgID on different server.
+      #
+      # Let's proxy those locations and the main site on GitHub Pages
+      # behind a single hostname (cloud.italia.it).
+
+      location / {
+        proxy_pass https://italia.github.io/cloud.italia.it-site/;
+        proxy_set_header Host italia.github.io;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 20s;
+      }
+
+      location ^~ /.well-known {
+        allow all;
+        alias /var/www/letsencrypt/.well-known;
+      }
+
+      location ~ /\.git {
+        deny all;
+      }
+
+      location /marketplace/ {
+        proxy_pass https://marketplace.ecaasagid.cs1.cloudspc.it/;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 20s;
+        proxy_ssl_server_name on;
+        proxy_ssl_name marketplace.ecaasagid.cs1.cloudspc.it;
+      }
+
+      location /marketplace/supplier/ {
+        proxy_pass https://supplier.ecaasagid.cs1.cloudspc.it/;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_ssl_server_name on;
+        proxy_ssl_name marketplace.ecaasagid.cs1.cloudspc.it;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 20s;
+      }
+
+      location /marketplace/admin/ {
+        proxy_pass https://admin.ecaasagid.cs1.cloudspc.it/;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_ssl_name marketplace.ecaasagid.cs1.cloudspc.it;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_ssl_server_name on;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 20s;
+      }
+    }
+
+  services:
+    nginx:
+      httpPort:
+        servicePort: 80
+        containerPort: 80
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/acme-challenge-type: http01
+    path: /
+    hosts:
+      - cloud.italia.it
+    tls:
+      - hosts:
+          - cloud.italia.it
+        secretName: cloud-italia-it-prod-tls
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    nginx: {}
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
