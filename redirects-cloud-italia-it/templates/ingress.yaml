@@ -1,0 +1,43 @@
+---
+
+{{- if .Values.redirects_cloud_italia_it.ingress.enabled -}}
+{{- $fullName := include "redirects-cloud-italia-it.fullname" . -}}
+{{- $servicePort := .Values.redirects_cloud_italia_it.services.nginx.httpPort.servicePort -}}
+{{- $ingressPath := .Values.redirects_cloud_italia_it.ingress.path -}}
+
+apiVersion: extensions/v1beta1
+
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app: {{ template "redirects-cloud-italia-it.name" . }}
+    chart: {{ template "redirects-cloud-italia-it.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.redirects_cloud_italia_it.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.redirects_cloud_italia_it.ingress.tls }}
+  tls:
+  {{- range .Values.redirects_cloud_italia_it.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.redirects_cloud_italia_it.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $servicePort }}
+  {{- end }}
+{{- end }}
