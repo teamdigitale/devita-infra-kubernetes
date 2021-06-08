@@ -7,7 +7,7 @@ redirects_cloud_italia_it:
   images:
     nginx:
       repository: docker.io/nginx
-      tag: 1.17.3-alpine
+      tag: 1.20.1-alpine
       pullPolicy: IfNotPresent
 
   nginx_config: |
