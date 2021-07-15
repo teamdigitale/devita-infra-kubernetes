@@ -1,0 +1,70 @@
+---
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "dashboard.fullname" . }}-script-repubblica-digitale
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "{{ .Values.dashboard.dashboard_scripts.repubblica_digitale_cron_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "dashboard.fullname" . }}-scripts-repubblica-digitale"
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: {{ template "dashboard.fullname" . }}-script-repubblica-digitale
+            image: "{{ .Values.global.registry }}{{ .Values.dashboard.images.dashboard_scripts.repository }}:{{ tpl .Values.dashboard.images.dashboard_scripts.tag . }}"
+            imagePullPolicy: {{ .Values.dashboard.images.dashboard_scripts.pullPolicy }}
+            command: ["/bin/bash"]
+            args: ["-c", "source /opt/ingestion_scripts/repubblica-digitale/process.sh"]
+            resources:
+{{ toYaml .Values.dashboard.resources.dashboard_scripts_repubblica_digitale | indent 14 }}
+            env:
+              - name: MONGODB_HOSTNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_hostname }}"
+              - name: MONGODB_DATABASE
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_database }}"
+              - name: MONGODB_AUTHDB
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_authdb }}"
+              - name: MONGODB_USERNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_username }}"
+              - name: MONGODB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: mongodb-password
+              - name: REPDIG_GOOGLE_PROJECT_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-project-id
+              - name: REPDIG_GOOGLE_PRIVATE_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-private-id
+              - name: REPDIG_GOOGLE_PRIVATE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-private-key
+              - name: REPDIG_GOOGLE_CLIENT_EMAIL
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-client-email
+              - name: REPDIG_GOOGLE_CLIENT_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-client-id
+              - name: REPDIG_GOOGLE_CLIENT_X509_CERT_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: repdig-google-client-x509-cert-url

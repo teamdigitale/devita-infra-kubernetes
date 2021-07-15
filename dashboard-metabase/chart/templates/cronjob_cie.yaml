@@ -1,0 +1,46 @@
+---
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "dashboard.fullname" . }}-script-cie
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "{{ .Values.dashboard.dashboard_scripts.cie_cron_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "dashboard.fullname" . }}-scripts-cie"
+        spec:
+          containers:
+          - name: {{ template "dashboard.fullname" . }}-scripts-cie
+            image: "{{ .Values.global.registry }}{{ .Values.dashboard.images.dashboard_scripts.repository }}:{{ tpl .Values.dashboard.images.dashboard_scripts.tag . }}"
+            imagePullPolicy: {{ .Values.dashboard.images.dashboard_scripts.pullPolicy }}
+            command: ["/bin/bash"]
+            args: ["-c", "source /opt/ingestion_scripts/cie/process.sh"]
+            resources:
+{{ toYaml .Values.dashboard.resources.dashboard_scripts_cie | indent 14 }}
+            env:
+              - name: MONGODB_HOSTNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_hostname }}"
+              - name: MONGODB_DATABASE
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_database }}"
+              - name: MONGODB_AUTHDB
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_authdb }}"
+              - name: MONGODB_USERNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_username }}"
+              - name: MONGODB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-secrets
+                    key: mongodb-password
+              - name: CIE_DATADIR
+                value: "{{ .Values.dashboard.dashboard_scripts.cie_datadir }}"
+              - name: CIE_ENV
+                value: "{{ .Values.dashboard.dashboard_scripts.cie_env }}"
+              - name: CIE_STATS_URL
+                value: "{{ .Values.dashboard.dashboard_scripts.cie_stats_url }}"
+          restartPolicy: Never

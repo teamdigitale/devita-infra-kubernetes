@@ -1,0 +1,61 @@
+---
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "dashboard.fullname" . }}-backup-mongodb
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  schedule: "{{ .Values.dashboard.backups.mongodb_schedule }}"
+
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "dashboard.fullname" . }}"
+        spec:
+          restartPolicy: Never
+
+          containers:
+          - name: {{ template "dashboard.fullname" . }}
+            image: "{{ .Values.global.registry }}{{ .Values.dashboard.images.dashboard_backup_mongodb.repository }}:{{ tpl .Values.dashboard.images.dashboard_backup_mongodb.tag . }}"
+            imagePullPolicy: {{ .Values.dashboard.images.dashboard_backup_mongodb.pullPolicy }}
+
+            command:
+            - /bin/sh
+            args:
+            - -c
+            - |
+              # Create dir if does not exist
+              mkdir -p /tmp/backups/mongodb/daily_backups && \
+              # Backup
+              mongodump --host=dashboard-metabase-mongodb --port=27017 --username=root --password=$(MONGODB_ROOT_PASSWORD) --archive=/tmp/backups/mongodb/daily_backups/$(date +%Y-%m-%d_%Hh%Mm).gz --gzip --verbose && \
+              # Delete files older than retantion desired
+              cd /tmp/backups/mongodb/daily_backups && \
+              ls -tp | grep -v '/$' | tail -n +$(( ${DAILY_BACKUP_RETENTION} + 1 )) | xargs -I {} rm -- {}
+
+            env:
+            - name: DAILY_BACKUP_RETENTION
+              value: "{{ .Values.dashboard.backups.daily_backup_retention }}"
+            # Secrets
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard-metabase-secrets
+                  key: mongodb-root-password
+
+            volumeMounts:
+            - name: backups
+              mountPath: /tmp/backups
+              readOnly: false
+
+            resources:
+{{ toYaml .Values.dashboard.resources.dashboard_backup_mongodb | indent 14 }}
+
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: dashboard-metabase-backup

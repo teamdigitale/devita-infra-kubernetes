@@ -1,0 +1,181 @@
+---
+
+global:
+  registry: ''
+
+postgresql:
+  global:
+    postgresql:
+      postgresqlDatabase: dashboard
+      postgresqlUsername: dipartimentoinnovazione
+      existingSecret: dashboard-metabase-secrets
+  persistence:
+    existingClaim: dashboard-metabase-postgres
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+
+mongodb:
+  mongodbDatabase: monitor_mdb
+  mongodbUsername: dipartimentoinnovazione
+  existingSecret: dashboard-metabase-secrets
+  persistence:
+    existingClaim: dashboard-metabase-mongodb-data
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 6Gi
+    limits:
+      cpu: 2000m
+      memory: 10Gi
+
+metabase:
+  database:
+    type: postgres
+    host: dashboard-metabase-postgresql
+    dbname: dashboard
+    existingSecret: dashboard-metabase-secrets
+    existingSecretUsernameKey: postgresql-username
+    existingSecretPasswordKey: postgresql-password
+    timeZone: timeZone=Europe/Rome
+  service:
+    externalPort: 80
+  ingress:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+    hosts:
+      - dashboards.innovazione.gov.it
+    path: "/(app/dist/.*)|(app/assets/.*)|(api/user/current)|(api/session)|(api/setting)|(api/geojson)|public"
+  ingress_admin:
+    enabled: "true"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: admin-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    hosts:
+      - host: dashboards.innovazione.gov.it
+        paths:
+          - /
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+    limits:
+      cpu: 3000m
+      memory: 8Gi
+
+dashboard:
+  images:
+    dashboard_scripts:
+      repository: teamdigitale/dpt-services-dashboard-scripts
+      tag: latest
+      pullPolicy: Always
+    dashboard_backup_mongodb:
+      repository: docker.io/bitnami/mongodb
+      tag: "4.2"
+      pullPolicy: IfNotPresent
+    dashboard_backup_postgresql:
+      repository: docker.io/postgres
+      tag: 11.6-alpine
+      pullPolicy: IfNotPresent
+
+  dashboard_scripts:
+    mongodb_hostname: dashboard-metabase-mongodb
+    mongodb_database: monitor_mdb
+    mongodb_authdb: monitor_mdb
+    mongodb_username: dipartimentoinnovazione
+
+    cie_cron_schedule: "10 6-23 * * *"
+    cie_datadir: /opt/ingestion_scripts/data/cie
+    cie_env: production
+    cie_secret_name: dashboard-secret-cie
+    cie_stats_url: https://www.cartaidentita.interno.gov.it/statistiche/progettocie.csv
+    cie_storage_account_share_name: dpt-services-prod-sashare-cie
+
+    devitalia_cron_schedule: "1 2 * * *"
+    devitalia_datadir: /tmp
+    devitalia_env: production
+
+    repubblica_digitale_cron_schedule: "0 0 * * *"
+
+    spid_cron_schedule: "0 6-23 * * *"
+    spid_datadir: /tmp
+    spid_env: production
+    spid_secret_name: dashboard-secret-spid
+    spid_storage_account_share_name: dpt-services-prod-sashare-spid
+
+  backups:
+    # Execute backup every Sunday at 2am
+    mongodb_schedule: "0 2 * * 6"
+    # Execute backup every Sunday at 6am
+    postgresql_schedule: "0 6 * * 6"
+    daily_backup_retention: "30"
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    dashboard_scripts_cie:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_devitalia:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_repubblica_digitale:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_spid:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    bashboard_backup_mongodb:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    bashboard_backup_postgresql:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
