@@ -108,12 +108,6 @@ dashboard:
 
     repubblica_digitale_cron_schedule: "0 0 * * *"
 
-    spid_cron_schedule: "0 6-23 * * *"
-    spid_datadir: /tmp
-    spid_env: production
-    spid_secret_name: dashboard-secret-spid
-    spid_storage_account_share_name: dpt-services-prod-sashare-spid
-
   backups:
     # Execute backup every Sunday at 2am
     mongodb_schedule: "0 2 * * 6"

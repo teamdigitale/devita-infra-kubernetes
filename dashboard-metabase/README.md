@@ -11,26 +11,6 @@ The following steps should be performed before being able to install metabase an
 The chart makes use of some Kubernetes PersistentVolumeClaims (PVCs) to maintain data persistence (i.e. data in MongoDB, Postgres). PVCs should be independent from the chart lifecycle, so that they're not removed every time the chart gets removed. For this reason, their configuration files are stored in a separate directory, called storage.
 Make sure to apply with *kubectl* the chart corresponding PVC first, before continuing.
 
-### Storage creation to support SPID data ingestion
-
-SPID related CSV files are periodically uploaded manually by users of the Team. To enable such functionality it's important to first create a special storage in Azure where the CSV can be uploaded.
-
-To create the storage, some [live Terraform modules](https://github.com/teamdigitale/dpt-services-infra-tf-live) should be applied.
-
-These modules are, in order:
-
-* [storage_account_dashboard_spid](https://github.com/teamdigitale/dpt-services-infra-tf-live/tree/dev/westeurope/storage_account_dashboard_spid)
-
-* [storage_account_dashboard_spid_share](https://github.com/teamdigitale/dpt-services-infra-tf-live/tree/dev/westeurope/storage_account_dashboard_spid_share).
-
-Once the storage share has been created in Azure, create a secret in Kubernetes to let the SPID container connect to it as needed:
-
-```shell
-kubectl create secret generic dashboard-secret-spid --from-literal=azurestorageaccountname=YOUR_SPID_STORAGE_ACCOUNT_NAME --from-literal=azurestorageaccountkey=YOUR_SPID_STORAGE_ACCOUNT_KEY --namespace=dashboards
-```
-
-Both the storage account name and the storage account key should be retrieved from the Azure storage account section in the GUI.
-
 ### Create secrets in Azure Keyvault and sync it in Kubernetes
 
 Create in the Azure Keyvault a secret named *k8s-secrets-dashboard-metabase*.
