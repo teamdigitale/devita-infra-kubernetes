@@ -6,7 +6,6 @@ name: dashboard
 description: dashboard is a powerful data management system that makes data accessible – by providing tools to streamline publishing, sharing, finding and using data. dashboard is a key component consumed by the PDND project.
 
 version: 0.1.2
-appVersion: "0.1.0"
 
 dependencies:
 - name: postgresql
