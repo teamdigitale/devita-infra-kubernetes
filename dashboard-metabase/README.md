@@ -63,14 +63,14 @@ In order to upgrade all components (cronjob included) it is necessary to uninsta
 helm uninstall -n dashboards dashboard-metabase
 ```
 
-Download dependencies if they not yet exist in dashboard-metabase/chart/charts and then install
+Download dependencies if they not yet exist in dashboard-metabase/charts and then install
 ```shell
-cd dashboard-metabase/chart && helm dep update && cd ../../
+cd dashboard-metabase && helm dep update && cd ../../
 
 helm install \
   --namespace dashboards \
   dashboard-metabase \
-  dashboard-metabase/chart
+  dashboard-metabase
 ```
 ## Metabase and its databases
 
