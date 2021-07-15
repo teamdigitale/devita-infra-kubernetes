@@ -35,7 +35,7 @@ spec:
 
 ---
 
-# Storage account for CLA assistant Mongo DB backup
+# Storage account for Mongo DB backup
 apiVersion: v1
 
 kind: PersistentVolumeClaim
