@@ -1,5 +1,4 @@
 ---
-
 global:
   registry: ''
 
@@ -20,9 +19,10 @@ postgresql:
       memory: 4Gi
 
 mongodb:
-  mongodbDatabase: monitor_mdb
-  mongodbUsername: dipartimentoinnovazione
-  existingSecret: dashboard-metabase-secrets
+  auth:
+    database: monitor_mdb
+    username: dipartimentoinnovazione
+    existingSecret: dashboard-metabase-secrets
   persistence:
     existingClaim: dashboard-metabase-mongodb-data
   resources:
@@ -34,14 +34,17 @@ mongodb:
       memory: 10Gi
 
 metabase:
-  database:
-    type: postgres
-    host: dashboard-metabase-postgresql
-    dbname: dashboard
-    existingSecret: dashboard-metabase-secrets
-    existingSecretUsernameKey: postgresql-username
-    existingSecretPasswordKey: postgresql-password
-    timeZone: timeZone=Europe/Rome
+  config:
+    database:
+      type: postgres
+  secrets:
+    database:
+      host: dashboard-metabase-postgresql
+      dbname: dashboard
+      # existingSecret: dashboard-metabase-secrets
+      # existingSecretUsernameKey: postgresql-username
+      # existingSecretPasswordKey: postgresql-password
+      # timeZone: timeZone=Europe/Rome
   service:
     externalPort: 80
   ingress:
@@ -53,19 +56,19 @@ metabase:
     hosts:
       - dashboards-new.innovazione.gov.it
     path: "/(app/dist/.*)|(app/assets/.*)|(api/user/current)|(api/session)|(api/setting)|(api/geojson)|public"
-  ingress_admin:
-    enabled: "true"
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/auth-type: basic
-      nginx.ingress.kubernetes.io/auth-secret: admin-basic-auth
-      nginx.ingress.kubernetes.io/auth-realm: Authentication Required
-    hosts:
-      - host: dashboards-new.innovazione.gov.it
-        paths:
-          - /
+  # ingress_admin:
+  #   enabled: "true"
+  #   annotations:
+  #     kubernetes.io/ingress.class: nginx
+  #     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  #     nginx.ingress.kubernetes.io/use-regex: "true"
+  #     nginx.ingress.kubernetes.io/auth-type: basic
+  #     nginx.ingress.kubernetes.io/auth-secret: admin-basic-auth
+  #     nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+  #   hosts:
+  #     - host: dashboards-new.innovazione.gov.it
+  #       paths:
+  #         - /
   resources:
     requests:
       cpu: 1000m
