@@ -21,19 +21,19 @@ The value of the secret should be in the following format:
 {
   "postgresql-username": "YOUR_POSTGRESQL_USERNAME",
   "postgresql-password": "YOUR_POSTGRESQL_PASSWORD",
-  "postgresql-replication-password": "YOUR_POSTGRESQL_REPLICATOIN_PASSWORD",
+  "postgresql-replication-password": "YOUR_POSTGRESQL_REPLICATION_PASSWORD",
   "mongodb-root-password": "YOUR_MONGODB_ROOT_PASSWORD",
   "mongodb-password": "YOUR_MONGODB_PASSWORD",
-  "forum_api_key": "YOUR_FORUM_API_KEY",
-  "token_github": "YOUR_GITHUB_TOKEN",
-  "token_slack": "YOUR_SLACK_TOKEN",
-  "google_project_id": "YOUR_GOOGLE_PROJECT_ID",
-  "google_private_id": "YOUR_GOOGLE_PRIVATE_ID",
-  "google_private_key": "YOUR_GOOGLE_PRIVATE_KEY",
-  "google_client_email": "YOUR_GOOGLE_CLIENT_EMAIL",
-  "google_client_id": "YOUR_GOOGLE_CLIENT_ID",
-  "google_client_x509_cert_url": "YOUR_GOOGLE_X509_CLIENT_CERT_URL",
-  "google_wpid": "YOUR_GOOGLE_WP_ID"
+  "devitalia-forum-api-key": "YOUR_FORUM_API_KEY",
+  "devitalia-token-github": "YOUR_GITHUB_TOKEN",
+  "devitalia-token-slack": "YOUR_SLACK_TOKEN",
+  "devitalia-google-project-id": "YOUR_GOOGLE_PROJECT_ID",
+  "devitalia-google-private-id": "YOUR_GOOGLE_PRIVATE_ID",
+  "devitalia-google-private-key": "YOUR_GOOGLE_PRIVATE_KEY",
+  "devitalia-google-client-email": "YOUR_GOOGLE_CLIENT_EMAIL",
+  "devitalia-google-client-id": "YOUR_GOOGLE_CLIENT_ID",
+  "devitalia-google-client-x509-cert-url": "YOUR_GOOGLE_X509_CLIENT_CERT_URL",
+  "devitalia-google-wpid": "YOUR_GOOGLE_WP_ID"
 }
 ```
 
