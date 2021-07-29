@@ -131,6 +131,10 @@ spec:
     includeClusterResources: null
     snapshotVolumes: true
     storageLocation: default
+    # Individual objects must match this label selector to be included in the scheduled backup. Optional.
+    labelSelector:
+      matchLabels:
+        velero-backup: "true"
     volumeSnapshotLocations:
       - default
     # Preserve monthly backups for a year
