@@ -11,7 +11,7 @@ spec:
   storageClassName: managed-premium-custom
   resources:
     requests:
-      storage: 50Gi
+      storage: 60Gi
 
 ---
 
