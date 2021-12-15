@@ -1,6 +1,7 @@
-clusterName: "developersitalia"
+clusterName: "developersitalia-staging"
 
 imageTag: "7.13.4"
+replicas: 1
 
 esConfig:
   elasticsearch.yml: |
@@ -46,7 +47,7 @@ volumeClaimTemplate:
   storageClassName: managed-premium-custom
   resources:
     requests:
-      storage: 30Gi
+      storage: 1Gi
 
 secretMounts:
   - name: elastic-certificates
@@ -64,6 +65,10 @@ extraEnvs:
       secretKeyRef:
         name: elasticsearch-secrets
         key: password
+  - name: discovery.type
+    value: single-node
+  - name: cluster.initial_master_nodes
+    value: null
 
 ingress:
     enabled: "true"
@@ -75,9 +80,9 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       cert-manager.io/acme-challenge-type: http01
     hosts:
-      - elasticsearch.developers.italia.it
+      - staging-elasticsearch.developers.italia.it
     path: /
     tls:
       - hosts:
-          - elasticsearch.developers.italia.it
-        secretName: elasticsearch-prod-tls
+          - staging-elasticsearch.developers.italia.it
+        secretName: elasticsearch-staging-tls

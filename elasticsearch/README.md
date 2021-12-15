@@ -38,7 +38,13 @@ helm repo add elastic https://helm.elastic.co
 
 helm repo update
 
-helm install -f custom.yaml --version 7.6.1 elasticsearch elastic/elasticsearch
+helm install -f custom.yaml --version 7.13.4 elasticsearch elastic/elasticsearch
+```
+
+* Install Staging Elasticsearch (optional)
+
+```shell
+helm install -f custom-staging.yaml -n elasticsearch elasticsearch-staging elastic/elasticsearch
 ```
 
 ## Elasticsearch Prometheus Exporter
