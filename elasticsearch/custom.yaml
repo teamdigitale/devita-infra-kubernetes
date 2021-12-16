@@ -38,6 +38,9 @@ esConfig:
     rootLogger.level = info
     rootLogger.appenderRef.console.ref = console
 
+# Disable message lookup substitutions (CVE-2021-44228)
+esJavaOpts: "-Dlog4j2.formatMsgNoLookups=true"
+
 antiAffinity: soft
 
 volumeClaimTemplate:
