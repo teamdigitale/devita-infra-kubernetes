@@ -47,7 +47,7 @@ Each folder generally represents an application, except a few of them that inste
 7. You may have more than one cluster configuration on your computer.
 
 * To see your contexts: `kubectl config get-contexts`
-* To use your context: `kubectl config user-context CONTEXT_NAME`
+* To use your context: `kubectl config use-context CONTEXT_NAME`
 
   More info [here](https://kubernetes-v1-4.github.io/docs/user-guide/kubectl/kubectl_config_use-context/)
 
