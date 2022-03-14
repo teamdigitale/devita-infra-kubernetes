@@ -132,7 +132,7 @@ The secrets synchronization and container injection is realized using [this comp
 Add the *spv-charts* repo and update the repo index:
 
 ```shell
-helm repo add spv-charts http://charts.spvapi.no
+helm repo add spv-charts https://charts.spvapi.no
 helm repo update
 ```
 
@@ -141,18 +141,8 @@ Installation:
 ```shell
 kubectl create namespace azurekeyvault
 
-helm install \
-    --set installCrd=false \
-    --version 1.1.16 \
-    --namespace azurekeyvault \
-    key-vault-controller \
-    spv-charts/azure-key-vault-controller
-
-helm install \
-    --version 1.1.21 \
-    --namespace azurekeyvault \
-    key-vault-env-injector \
-    spv-charts/azure-key-vault-env-injector
+helm --install akv2k8s spv-charts/akv2k8s -n azurekeyvault --version 1.1.28
+kubectl apply -f https://raw.githubusercontent.com/sparebankenvest/azure-key-vault-to-kubernetes/master/crds/AzureKeyVaultSecret.yaml
 ```
 
 Enable the automatic env variables injection for all containers in the default namespace:
