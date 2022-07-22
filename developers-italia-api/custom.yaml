@@ -9,7 +9,10 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   path: /
   hosts:
-    - api.developers.italia.it
+    - host: api.developers.italia.it
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls:
     - hosts:
         - api.developers.italia.it
