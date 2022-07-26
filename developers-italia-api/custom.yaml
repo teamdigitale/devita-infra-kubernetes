@@ -1,0 +1,29 @@
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/acme-challenge-type: http01
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  path: /
+  hosts:
+    - host: api.developers.italia.it
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - api.developers.italia.it
+      secretName: developers-italia-api-prod-tls
+
+useExistingSecret: developers-italia-api-secrets
+
+keel:
+  # keel policy (all/major/minor/patch/force)
+  policy: all
+  # images to track and update
+  images:
+    - repository: image.repository
+      tag: image.tag
