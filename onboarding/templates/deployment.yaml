@@ -90,7 +90,7 @@ spec:
             - name: ONBOARDING_SMTP_PASSWORD
               value: onboarding-secrets@azurekeyvault?smtp-password
             - name: ONBOARDING_PASETO_KEY
-              value: onboarding-secrets@azurekeyvault?pasetoKey
+              value: onboarding-secrets@azurekeyvault?paseto-key
 
           {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
           volumeMounts:
