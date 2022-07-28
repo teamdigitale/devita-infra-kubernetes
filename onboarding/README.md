@@ -15,7 +15,8 @@ To deploy the onboarding app, please proceed as follows:
    {
    "smtp-hostname": "YOUR_SMTP_HOSTNAME",
    "smtp-username": "YOUR_SMTP_USERNAME",
-   "smtp-password": "YOUR_SMTP_PASSWORD"
+   "smtp-password": "YOUR_SMTP_PASSWORD",
+   "paseto-key": "BASE-64 encoded PASETO key for developers-italia-api tokens"
    }
    ```
 
