@@ -18,7 +18,7 @@ ingress:
         - api.developers.italia.it
       secretName: developers-italia-api-prod-tls
 
-useExistingSecret: developers-italia-api-secrets
+useExistingSecret: developers-italia-api-azure-kv
 
 keel:
   # keel policy (all/major/minor/patch/force)
