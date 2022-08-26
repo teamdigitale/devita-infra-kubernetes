@@ -46,14 +46,17 @@ spec:
               - name: ELASTIC_USER
                 value: "{{ .Values.crawler.env.elastic_user }}"
               - name: ELASTIC_PWD
-                value: crawler-secrets@azurekeyvault?elastic-pass
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "crawler.fullname" . }}-azure-kv
+                    key: elastic-pass
 
           restartPolicy: Never
 
           volumes:
           - name: configs
             secret:
-              secretName: {{ template "crawler.fullname" . }}-secrets
+              secretName: {{ template "crawler.fullname" . }}-azure-kv
               items:
               - key: domains.yml
                 path: domains.yml
