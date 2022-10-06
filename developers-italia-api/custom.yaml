@@ -11,8 +11,8 @@ ingress:
   hosts:
     - host: api.developers.italia.it
       paths:
-        - path: /
-          pathType: ImplementationSpecific
+        - path: /v1
+          pathType: Prefix
   tls:
     - hosts:
         - api.developers.italia.it
