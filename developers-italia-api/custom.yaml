@@ -1,3 +1,8 @@
+deploymentAnnotations:
+  keel.sh/policy: major
+  keel.sh/trigger: poll      
+  keel.sh/pollSchedule: "@every 1m"
+
 ingress:
   enabled: true
   annotations:
@@ -19,11 +24,3 @@ ingress:
       secretName: developers-italia-api-prod-tls
 
 useExistingSecret: developers-italia-api-azure-kv
-
-keel:
-  # keel policy (all/major/minor/patch/force)
-  policy: all
-  # images to track and update
-  images:
-    - repository: image.repository
-      tag: image.tag
