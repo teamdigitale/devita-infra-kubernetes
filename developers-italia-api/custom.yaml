@@ -24,3 +24,6 @@ ingress:
       secretName: developers-italia-api-prod-tls
 
 useExistingSecret: developers-italia-api-azure-kv
+
+serviceMonitor:
+  enabled: true
