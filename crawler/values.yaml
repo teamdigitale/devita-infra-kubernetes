@@ -7,7 +7,7 @@ crawler:
   images:
     crawler:
       repository: docker.io/italia/developers-italia-backend
-      tag: latest
+      tag: legacy
       pullPolicy: Always
     nginx:
       repository: docker.io/nginx
