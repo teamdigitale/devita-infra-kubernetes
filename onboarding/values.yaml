@@ -8,7 +8,7 @@ onboarding:
 
   images:
     repository: docker.io/italia/developers-italia-onboarding
-    tag: v1.3.1
+    tag: v1.3.3
     pullPolicy: Always
 
   env:

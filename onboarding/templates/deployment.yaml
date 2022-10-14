@@ -84,13 +84,25 @@ spec:
             - name: ONBOARDING_EMAIL_SUBJECT
               value: "{{ .Values.onboarding.env.onboarding_email_subject }}"
             - name: ONBOARDING_SMTP_HOSTNAME
-              value: onboarding-secrets@azurekeyvault?smtp-hostname
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "onboarding.fullname" . }}-azure-kv
+                  key: smtp-hostname
             - name: ONBOARDING_SMTP_USERNAME
-              value: onboarding-secrets@azurekeyvault?smtp-username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "onboarding.fullname" . }}-azure-kv
+                  key: smtp-username
             - name: ONBOARDING_SMTP_PASSWORD
-              value: onboarding-secrets@azurekeyvault?smtp-password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "onboarding.fullname" . }}-azure-kv
+                  key: smtp-password
             - name: ONBOARDING_PASETO_KEY
-              value: onboarding-secrets@azurekeyvault?paseto-key
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "onboarding.fullname" . }}-azure-kv
+                  key: paseto-key
 
           {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
           volumeMounts:
