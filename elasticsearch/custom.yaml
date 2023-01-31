@@ -1,7 +1,5 @@
 clusterName: "developersitalia"
 
-imageTag: "7.13.4"
-
 esConfig:
   elasticsearch.yml: |
     xpack.security.enabled: true
@@ -22,7 +20,7 @@ esConfig:
     http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
     http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length
     logger.level: info
-  roles.yml : |
+  roles.yml: |
     readonly:
       run_as: [ 'elastic' ]
       cluster: [ 'monitor' ]
@@ -53,34 +51,33 @@ volumeClaimTemplate:
 
 secretMounts:
   - name: elastic-certificates
-    secretName: elasticsearch-secrets-certs
+    secretName: elasticsearch-certs-azure-kv
     path: /usr/share/elasticsearch/config/certs
 
 extraEnvs:
   - name: ELASTIC_USERNAME
     valueFrom:
       secretKeyRef:
-        name: elasticsearch-secrets
+        name: elasticsearch-azure-kv
         key: username
   - name: ELASTIC_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: elasticsearch-secrets
+        name: elasticsearch-azure-kv
         key: password
-
-ingress:
-    enabled: "true"
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-body-size: 100m
-      cert-manager.io/cluster-issuer: letsencrypt-prod
-      cert-manager.io/acme-challenge-type: http01
-    hosts:
-      - elasticsearch.developers.italia.it
-    path: /
-    tls:
-      - hosts:
-          - elasticsearch.developers.italia.it
-        secretName: elasticsearch-prod-tls
+# ingress:
+#   enabled: "true"
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     kubernetes.io/tls-acme: "true"
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/proxy-body-size: 100m
+#     cert-manager.io/cluster-issuer: letsencrypt-prod
+#     cert-manager.io/acme-challenge-type: http01
+#   hosts:
+#     - elasticsearch.developers.italia.it
+#   path: /
+#   tls:
+#     - hosts:
+#         - elasticsearch.developers.italia.it
+#       secretName: elasticsearch-prod-tls
