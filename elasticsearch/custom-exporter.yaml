@@ -1,5 +1,4 @@
 serviceMonitor:
   enabled: true
-  namespace: monitoring
 es:
   uri: "http://developersitalia-master:9200"
