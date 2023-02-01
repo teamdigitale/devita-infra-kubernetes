@@ -1,7 +1,6 @@
 ---
-
 global:
-  registry: ''
+  registry: ""
 
 crawler:
   images:
@@ -11,11 +10,11 @@ crawler:
       pullPolicy: Always
     nginx:
       repository: docker.io/nginx
-      tag: 1.20.0-alpine
+      tag: 1.23-alpine
       pullPolicy: IfNotPresent
 
   env:
-    elastic_url: "http://developersitalia-master:9200"
+    elastic_url: "http://developersitalia-master.elasticsearch:9200"
     elastic_user: "elastic"
 
   cronjob_schedule: "0 0 * * *"
@@ -36,9 +35,7 @@ crawler:
   ingress:
     enabled: true
     annotations:
-      kubernetes.io/ingress.class: nginx
       kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "true"
       nginx.ingress.kubernetes.io/cors-allow-methods: "GET, OPTIONS"
       cert-manager.io/cluster-issuer: letsencrypt-prod
