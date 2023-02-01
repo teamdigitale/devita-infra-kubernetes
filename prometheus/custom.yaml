@@ -20,7 +20,17 @@ alertmanager:
   alertmanagerSpec:
     externalUrl: "http://localhost:9093"
     useExistingSecret: true
-    configSecret: prometheus-secrets
+    configSecret: prometheus-azure-kv
+    volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: prometheus
+    volumeMounts:
+      - mountPath: /secrets-store
+        name: secrets-store
 
 prometheus:
   prometheusSpec:
