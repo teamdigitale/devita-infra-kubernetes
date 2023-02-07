@@ -21,7 +21,7 @@ slack_registration:
       }
 
       location / {
-        return 302 https://join.slack.com/t/developersitalia/shared_invite/zt-1nq6yyw6d-uAivR7ITcQFNOHZcMxKqvw;
+        return 302 https://join.slack.com/t/developersitalia/shared_invite/zt-1oqhl8qt0-A_slaEXE_OghzkXHPVuiQg;
       }
     }
 
