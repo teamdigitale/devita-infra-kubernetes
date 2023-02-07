@@ -11,10 +11,10 @@ deploymentAnnotations:
 
 ingress:
   enabled: true
+  className: nginx
   annotations:
     cert-manager.io/acme-challenge-type: http01
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -33,3 +33,15 @@ useExistingSecret: developers-italia-api-staging-azure-kv
 
 serviceMonitor:
   enabled: true
+
+extraVolumes:
+  - name: secrets-store
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: developers-italia-api-staging
+
+extraVolumeMounts:
+  - mountPath: /secrets-store
+    name: secrets-store
