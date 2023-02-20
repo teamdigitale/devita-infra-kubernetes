@@ -1,0 +1,20 @@
+env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: external-dns-cloudflare
+        key: api-token
+
+extraVolumes:
+  - name: secrets-store
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: external-dns-cloudflare
+
+extraVolumeMounts:
+  - mountPath: /secrets-store
+    name: secrets-store
+
+provider: cloudflare
