@@ -1,0 +1,13 @@
+apiVersion: v1
+
+kind: PersistentVolumeClaim
+metadata:
+  name: dashboard-metabase-backup
+  namespace: dashboards
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile-standard
+  resources:
+    requests:
+      storage: 50Gi

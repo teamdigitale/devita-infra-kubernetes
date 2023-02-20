@@ -1,0 +1,94 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "dashboard.fullname" . }}-script-devitalia
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "{{ .Values.dashboard.dashboard_scripts.devitalia_cron_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "dashboard.fullname" . }}-scripts-devitalia"
+        spec:
+          containers:
+          - name: {{ template "dashboard.fullname" . }}-script-devitalia
+            image: "{{ .Values.global.registry }}{{ .Values.dashboard.images.dashboard_scripts.repository }}:{{ tpl .Values.dashboard.images.dashboard_scripts.tag . }}"
+            imagePullPolicy: {{ .Values.dashboard.images.dashboard_scripts.pullPolicy }}
+            command: ["/bin/bash"]
+            args: ["-c", "source /opt/ingestion_scripts/devitalia/fetch.sh && source /opt/ingestion_scripts/devitalia/process.sh"]
+            resources:
+{{ toYaml .Values.dashboard.resources.dashboard_scripts_devitalia | indent 14 }}
+            env:
+              - name: MONGODB_HOSTNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_hostname }}"
+              - name: MONGODB_DATABASE
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_database }}"
+              - name: MONGODB_AUTHDB
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_authdb }}"
+              - name: MONGODB_USERNAME
+                value: "{{ .Values.dashboard.dashboard_scripts.mongodb_username }}"
+              - name: MONGODB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: mongodb-passwords
+              - name: DEVITALIA_DATADIR
+                value: "{{ .Values.dashboard.dashboard_scripts.devitalia_datadir }}"
+              - name: DEVITALIA_ENV
+                value: "{{ .Values.dashboard.dashboard_scripts.devitalia_env }}"
+              - name: DEVITALIA_TOKEN_GITHUB
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-token-github
+              - name: DEVITALIA_TOKEN_SLACK
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-token-slack
+              - name: DEVITALIA_FORUM_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-forum-api-key
+              - name: DEVITALIA_GOOGLE_WPID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-wpid
+              - name: DEVITALIA_GOOGLE_PROJECT_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-project-id
+              - name: DEVITALIA_GOOGLE_PRIVATE_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-private-id
+              - name: DEVITALIA_GOOGLE_PRIVATE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-private-key
+              - name: DEVITALIA_GOOGLE_CLIENT_EMAIL
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-client-email
+              - name: DEVITALIA_GOOGLE_CLIENT_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-client-id
+              - name: DEVITALIA_GOOGLE_CLIENT_X509_CERT_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: dashboard-metabase-azure-kv
+                    key: devitalia-google-client-x509-cert-url
+          restartPolicy: Never
