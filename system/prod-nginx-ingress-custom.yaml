@@ -1,15 +1,10 @@
 ---
 controller:
   replicaCount: 2
-  # metrics:
-  #   enabled: "true"
-  #   serviceMonitor:
-  #     enabled: true
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
   service:
     externalTrafficPolicy: "Local"
     loadBalancerIP: 20.71.3.216
-#  defaultBackendService: ingress/custom-default-backend
-#  config:
-#    custom-http-errors: 403,500
-#defaultBackend:
-#  enabled: false
