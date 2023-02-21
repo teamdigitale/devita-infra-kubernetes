@@ -84,15 +84,9 @@ spec:
             - name: ONBOARDING_EMAIL_SUBJECT
               value: "{{ .Values.onboarding.env.onboarding_email_subject }}"
             - name: ONBOARDING_SMTP_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "onboarding.fullname" . }}-azure-kv
-                  key: smtp-hostname
+              value: "{{ .Values.onboarding.env.onboarding_smtp_hostname }}"
             - name: ONBOARDING_SMTP_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "onboarding.fullname" . }}-azure-kv
-                  key: smtp-username
+              value: "{{ .Values.onboarding.env.onboarding_smtp_username }}"
             - name: ONBOARDING_SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -104,12 +98,14 @@ spec:
                   name: {{ template "onboarding.fullname" . }}-azure-kv
                   key: paseto-key
 
-          {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
           volumeMounts:
+            {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
             - name: db
               mountPath: /usr/src/app/private/data
               readOnly: false
-          {{- end }}
+            {{- end }}
+            - mountPath: "/secrets-store"
+              name: secrets-store
 
           {{- if .Values.onboarding.livenessProbe }}
           {{- with .Values.onboarding.livenessProbe }}
@@ -144,9 +140,15 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
 
-      {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
       volumes:
+        {{- if eq (default "production" .Values.onboarding.deployEnvironment) "production" }}
         - name: db
           persistentVolumeClaim:
             claimName: onboarding
-      {{- end }}
+        {{- end }}
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ template "onboarding.fullname" . }}

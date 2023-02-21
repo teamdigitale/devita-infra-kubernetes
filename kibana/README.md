@@ -28,7 +28,7 @@ helm repo add elastic https://helm.elastic.co
 
 helm repo update
 
-helm install -f custom.yaml kibana elastic/kibana
+helm -n elasticsearch install -f custom.yaml kibana elastic/kibana --version 7.17.3
 ```
 
 # Administrative access to Kibana GUI

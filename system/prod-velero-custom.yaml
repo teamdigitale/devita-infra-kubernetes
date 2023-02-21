@@ -1,5 +1,4 @@
 ---
-
 configuration:
   provider: azure
   backupStorageLocation:
@@ -15,18 +14,46 @@ configuration:
     resourceGroup: devita-prod-rg
     storageAccount: devitaprodsabackups
     subscriptionId: d30b533f-c88b-45ec-867e-8e321aa0b03f
-
-image:
-  repository: velero/velero
-  tag: v1.4.0
-  pullPolicy: IfNotPresent
+  extraEnvVars:
+    AZURE_CREDENTIALS_FILE: /secrets-store/cloud
 
 initContainers:
   - name: velero-plugin-for-microsoft-azure
-    image: velero/velero-plugin-for-microsoft-azure:v1.1.0
+    image: velero/velero-plugin-for-microsoft-azure:v1.6.0
     volumeMounts:
       - mountPath: /target
         name: plugins
 
 credentials:
-  existingSecret: velero-secrets
+  useSecret: false
+
+extraObjects:
+  - apiVersion: secrets-store.csi.x-k8s.io/v1
+    kind: SecretProviderClass
+    metadata:
+      name: velero
+    spec:
+      provider: azure
+      parameters:
+        keyvaultName: devita-prod-kv
+        useVMManagedIdentity: "true"
+        userAssignedIdentityID: d7174ca3-5901-47ce-a1f6-32ec772f0de5
+        objects: |
+          array:
+            - |
+              objectName: k8s-secrets-velero-03
+              objectType: secret
+              objectAlias: cloud
+        tenantId: f7f7d6c7-92de-488e-b37e-8963207c7b86
+
+extraVolumes:
+  - name: secrets-store
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: velero
+
+extraVolumeMounts:
+  - mountPath: /secrets-store
+    name: secrets-store

@@ -1,6 +1,6 @@
 ---
 
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ template "crawler.fullname" . }}
@@ -24,19 +24,22 @@ spec:
             image: "{{ .Values.global.registry }}{{ .Values.crawler.images.crawler.repository }}:{{ tpl .Values.crawler.images.crawler.tag . }}"
             imagePullPolicy: {{ .Values.crawler.images.crawler.pullPolicy }}
 
-            command: ["./start.sh"]
+            command:
+              - /bin/bash
+            args:
+              - -c
+              - ln -sf /secrets-store/k8s-secrets-crawler-domains-yml domains.yml && ./start.sh
 
             volumeMounts:
-            - name: configs
-              mountPath: /go/developers-italia-backend/crawler/domains.yml
-              subPath: domains.yml
-              readOnly: true
             - name: data
               mountPath: /var/crawler/data
               readOnly: false
             - name: output
               mountPath: /var/crawler/output
               readOnly: false
+            - mountPath: /secrets-store
+              name: secrets-store
+
 
             resources:
 {{ toYaml .Values.crawler.resources.crawler | indent 14 }}
@@ -66,3 +69,9 @@ spec:
           - name: output
             persistentVolumeClaim:
               claimName: crawler-output
+          - name: secrets-store
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: {{ template "crawler.fullname" . }}

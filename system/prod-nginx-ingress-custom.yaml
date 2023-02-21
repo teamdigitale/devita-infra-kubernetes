@@ -1,22 +1,10 @@
 ---
-
 controller:
-  nodeSelector:
-    beta.kubernetes.io/os: linux
   replicaCount: 2
   metrics:
-    enabled: "true"
+    enabled: true
     serviceMonitor:
       enabled: true
-  stats:
-    enabled: "true"
   service:
     externalTrafficPolicy: "Local"
-    loadBalancerIP: 51.124.93.192
-  defaultBackendService: ingress/custom-default-backend
-  config:
-    custom-http-errors: 403,500
-defaultBackend:
-  enabled: false
-rbac:
-  create: "true"
+    loadBalancerIP: 20.71.3.216

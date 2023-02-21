@@ -1,0 +1,157 @@
+global:
+  registry: ""
+
+mongodb:
+  architecture: "standalone"
+  useStatefulSet: true
+  auth:
+    usernames:
+      - dipartimentoinnovazione
+    databases:
+      - monitor_mdb
+    existingSecret: dashboard-metabase-azure-kv
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  persistence:
+    resourcePolicy: "keep"
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 6Gi
+    limits:
+      cpu: 2000m
+      memory: 10Gi
+
+metabase:
+  database:
+    type: postgres
+    existingSecret: dashboard-metabase-azure-kv
+    existingSecretConnectionURIKey: postgresql-connectionURI
+    timeZone: timeZone=Europe/Rome
+  extraVolumes:
+    - name: secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: dashboard-metabase
+  extraVolumeMounts:
+    - mountPath: /secrets-store
+      name: secrets-store
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/issuer: prod-issuer
+      cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
+      cert-manager.io/issuer-kind: OriginIssuer
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+      external-dns.alpha.kubernetes.io/hostname: dashboards.innovazione.gov.it
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    hosts:
+      - dashboards.innovazione.gov.it
+    tls:
+      - hosts:
+          - dashboards.innovazione.gov.it
+        secretName: dashboard-metabase-prod-tls
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+    limits:
+      cpu: 3000m
+      memory: 8Gi
+
+dashboard:
+  images:
+    dashboard_scripts:
+      repository: teamdigitale/dpt-services-dashboard-scripts
+      tag: latest
+      pullPolicy: Always
+    dashboard_backup_mongodb:
+      repository: docker.io/bitnami/mongodb
+      tag: "6.0.4"
+      pullPolicy: IfNotPresent
+
+  dashboard_scripts:
+    mongodb_hostname: dashboard-metabase-mongodb
+    mongodb_database: monitor_mdb
+    mongodb_authdb: monitor_mdb
+    mongodb_username: dipartimentoinnovazione
+
+    cie_cron_schedule: "10 6-23 * * *"
+    cie_datadir: /opt/ingestion_scripts/data/cie
+    cie_env: production
+    cie_secret_name: dashboard-secret-cie
+    cie_stats_url: https://www.cartaidentita.interno.gov.it/statistiche/progettocie.csv
+    cie_storage_account_share_name: dpt-services-prod-sashare-cie
+
+    devitalia_cron_schedule: "1 2 * * *"
+    devitalia_datadir: /tmp
+    devitalia_env: production
+
+    padigitale_cron_schedule: "0 3 * * *"
+    padigitale_datadir: /tmp
+    padigitale_env: production
+
+    repubblica_digitale_cron_schedule: "0 0 * * *"
+
+  backups:
+    # Execute backup every Sunday at 2am
+    mongodb_schedule: "0 2 * * 6"
+    daily_backup_retention: "30"
+
+  resources:
+    # For each of the following objects, set limits
+    # removing the curly brackets after resources and
+    # uncommenting the lines below.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    dashboard_scripts_cie:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_devitalia:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_padigitale:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    dashboard_scripts_repubblica_digitale:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    bashboard_backup_mongodb:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+  nodeSelector: {}
+
+  tolerations: {}
+
+  affinity: {}
