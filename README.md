@@ -359,16 +359,6 @@ For example:
 helm delete my-app
 ```
 
-## Redirect containers
-
-Charts in the `redirects-*` directories are needed mainly to keep around legacy URLs.
-
-They are deployed in the `redirects` namespace, for example:
-
-```shell
-helm install --create-namespace -n redirects redirects-design-italia-it redirects-design-italia-it
-```
-
 ## How to contribute
 
 Contributions are welcome. Feel free to [open issues](./issues) and submit a [pull request](./pulls) at any time.
