@@ -1,8 +1,0 @@
----
-
-apiVersion: v1
-
-name: redirects-design-italia-it
-description: Nginx performing redirects for design.italia.it and designer.italia.it.
-
-version: 0.2.0
