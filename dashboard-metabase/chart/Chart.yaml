@@ -4,13 +4,13 @@ apiVersion: v1
 name: dashboard
 description: dashboard is a powerful data management system that makes data accessible – by providing tools to streamline publishing, sharing, finding and using data. dashboard is a key component consumed by the PDND project.
 
-version: 0.3.1
+version: 0.3.2
 appVersion: "0.1.0"
 
 dependencies:
   - name: mongodb
-    version: 13.10.1
+    version: 13.16.0
     repository: https://charts.bitnami.com/bitnami
   - name: metabase
-    version: 2.7.0
+    version: 2.7.4
     repository: https://pmint93.github.io/helm-charts
