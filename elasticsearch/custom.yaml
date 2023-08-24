@@ -83,3 +83,11 @@ ingress:
     - hosts:
         - elasticsearch.developers.italia.it
       secretName: elasticsearch-prod-tls
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
