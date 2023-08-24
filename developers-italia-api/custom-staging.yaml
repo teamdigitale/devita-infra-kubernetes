@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/italia/developers-italia-api
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: main
 
 deploymentAnnotations:
