@@ -19,7 +19,7 @@ mongodb:
     size: 10Gi
   resources:
     requests:
-      cpu: 1000m
+      cpu: 500m
       memory: 6Gi
     limits:
       cpu: 2000m
@@ -59,10 +59,10 @@ metabase:
         secretName: dashboard-metabase-prod-tls
   resources:
     requests:
-      cpu: 1000m
+      cpu: 100m
       memory: 4Gi
     limits:
-      cpu: 3000m
+      cpu: 2000m
       memory: 8Gi
 
 dashboard:
