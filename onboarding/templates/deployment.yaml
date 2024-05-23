@@ -83,6 +83,8 @@ spec:
               value: "{{ .Values.onboarding.env.onboarding_email_override_recipient_addr }}"
             - name: ONBOARDING_EMAIL_SUBJECT
               value: "{{ .Values.onboarding.env.onboarding_email_subject }}"
+            - name: DEVELOPERS_ITALIA_API_URL
+              value: "{{ .Values.onboarding.env.developers_italia_api_url }}"
             - name: ONBOARDING_SMTP_HOSTNAME
               value: "{{ .Values.onboarding.env.onboarding_smtp_hostname }}"
             - name: ONBOARDING_SMTP_USERNAME
