@@ -11,7 +11,7 @@ kubectl apply -f secretproviderclass.yaml
 # Get latest chart version from
 # https://github.com/italia/publiccode-crawler/pkgs/container/publiccode-crawler%2Fcharts%2Fpubliccode-crawler
 
-helm install
+helm install \
     publiccode-crawler \
     oci://ghcr.io/italia/publiccode-crawler/charts/publiccode-crawler \
     --version <LATEST_CHART_VERSION> \
@@ -21,7 +21,7 @@ helm install
 to upgrade:
 
 ```shell-session
-helm upgrade
+helm upgrade \
     publiccode-crawler \
     oci://ghcr.io/italia/publiccode-crawler/charts/publiccode-crawler \
     --version <LATEST_CHART_VERSION> \
