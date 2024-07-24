@@ -25,7 +25,7 @@ esConfig:
       run_as: [ 'elastic' ]
       cluster: [ 'monitor' ]
       indices:
-        - names: [ 'indicepa_pec', 'jekyll*', 'publiccodes', 'administrations' ]
+        - names: [ 'indicepa_pec', 'jekyll*', 'publiccodes', 'administrations', 'software', 'publishers', 'developers_italia_it' ]
           privileges: [ 'read' ]
   log4j2.properties: |
     status = error
