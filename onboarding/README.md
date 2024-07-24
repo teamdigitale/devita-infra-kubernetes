@@ -16,7 +16,7 @@ To deploy the onboarding app, please proceed as follows:
    "smtp-hostname": "YOUR_SMTP_HOSTNAME",
    "smtp-username": "YOUR_SMTP_USERNAME",
    "smtp-password": "YOUR_SMTP_PASSWORD",
-   "paseto-key": "BASE-64 encoded PASETO key for developers-italia-api tokens"
+   "paseto-key": "PASETO Bearer token for developers-italia-api"
    }
    ```
 
@@ -29,7 +29,7 @@ To deploy the onboarding app, please proceed as follows:
 1. (optional) Install the app in staging
 
    ```shell
-   helm install onboarding-staging onboarding -f onboarding/values-staging.yaml
+   helm install onboarding-staging onboarding -f onboarding/values-staging.yaml -f onboarding/secretproviderclass-staging.yaml
    ```
 
 ## Bring up test environment on Kubernetes

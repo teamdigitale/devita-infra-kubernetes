@@ -87,6 +87,8 @@ spec:
               value: "{{ .Values.onboarding.env.onboarding_smtp_hostname }}"
             - name: ONBOARDING_SMTP_USERNAME
               value: "{{ .Values.onboarding.env.onboarding_smtp_username }}"
+            - name: DEVELOPERS_ITALIA_API_URL
+              value: "{{ .Values.onboarding.env.developers_italia_api_url }}"
             - name: ONBOARDING_SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:

@@ -26,6 +26,7 @@ onboarding:
     onboarding_email_subject: "[staging] Onboarding Developers Italia"
     onboarding_smtp_hostname: smtp.eu.mailgun.org
     onboarding_smtp_username: onboarding@developers.italia.it
+    developers_italia_api_url: https://api-staging.developers.italia.it/v1
 
   services:
     httpPort:
