@@ -7,7 +7,7 @@ env:
   API_BASEURL: "https://api.developers.italia.it/v1"
 
 # -- (string) When to run publiccode-issueopener (cronjob format)
-cronjob_schedule: "0 18 * * *"
+cronjob_schedule: "0 6 * * *"
 
 # -- (string) Name of existing Kubernetes secret containing 'bot-github-token'.
 # If not provided, a secret will be generated using the value
