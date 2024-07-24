@@ -1,0 +1,50 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "publiccode-issueopener.fullname" . }}
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  schedule: "{{ .Values.cronjob_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: "{{ template "publiccode-issueopener.fullname" . }}"
+        spec:
+          securityContext:
+            fsGroup: 1000
+
+          containers:
+          - name: {{ template "publiccode-issueopener.fullname" . }}
+            image: "{{ .Values.image.repository }}:{{ tpl .Values.image.tag . }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+            volumeMounts:
+            - mountPath: /secrets-store
+              name: secrets-store
+
+            resources:
+              {{- toYaml .Values.resources | indent 14 }}
+            env:
+              - name: API_BASEURL
+                value: "{{ .Values.env.API_BASEURL}}"
+              - name: BOT_GITHUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ default (include "publiccode-issueopener.fullname" .) .Values.useExistingSecret }}
+                    key: botGithubToken
+
+          restartPolicy: Never
+
+          volumes:
+          - name: secrets-store
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: {{ template "publiccode-issueopener.fullname" . }}

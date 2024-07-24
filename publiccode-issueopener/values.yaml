@@ -1,0 +1,37 @@
+image:
+  repository: docker.io/italia/publiccode-issueopener
+  tag: latest
+  pullPolicy: Always
+
+env:
+  API_BASEURL: "https://api.developers.italia.it/v1"
+
+# -- (string) When to run publiccode-issueopener (cronjob format)
+cronjob_schedule: "0 18 * * *"
+
+# -- (string) Name of existing Kubernetes secret containing 'bot-github-token'.
+# If not provided, a secret will be generated using the value
+# of 'botGithubToken'.
+useExistingSecret: publiccode-issueopener-azure-kv
+
+secrets:
+  # -- (string) The GitHub token to use for opening issues on GitHub
+  botGithubToken:
+
+resources:
+   # We usually recommend not to specify default resources and to leave this as a conscious
+   # choice for the user. This also increases chances charts run on environments with little
+   # resources, such as Minikube. If you do want to specify resources, uncomment the following
+   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+   # limits:
+   #   cpu: 100m
+   #   memory: 128Mi
+   # requests:
+   #   cpu: 100m
+   #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: {}
+
+affinity: {}

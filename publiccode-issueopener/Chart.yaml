@@ -1,0 +1,12 @@
+---
+apiVersion: v2
+
+name: publiccode-issueopener
+description: |
+  This bot gets the list of repositories in the Italian software catalog
+  through the developers-italia-api, checks the validity of the publiccode.yml
+  file for errors, logs them, and opens GitHub issues accordingly.
+
+type: application
+
+version: 0.1.0
