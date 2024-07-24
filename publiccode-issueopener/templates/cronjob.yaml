@@ -24,6 +24,11 @@ spec:
             image: "{{ .Values.image.repository }}:{{ tpl .Values.image.tag . }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
 
+            command:
+            - ./main.py
+            args:
+            - --lang=it
+
             volumeMounts:
             - mountPath: /secrets-store
               name: secrets-store
