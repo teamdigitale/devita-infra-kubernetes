@@ -28,7 +28,7 @@ metadata:
     {{- /*
     When in production, update on new semver tag
     */}}
-    keel.sh/policy: patch
+    keel.sh/policy: major
     {{- end }}
 
 spec:
