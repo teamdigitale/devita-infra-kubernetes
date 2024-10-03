@@ -7,7 +7,7 @@ onboarding:
 
   images:
     repository: docker.io/italia/developers-italia-onboarding
-    tag: v1.3.3
+    tag: v1.4.2
     pullPolicy: Always
 
   env:
@@ -20,7 +20,7 @@ onboarding:
     onboarding_email_from: "Team per la Trasformazione Digitale <contatti@developers.italia.it>"
     onboarding_email_cc: ""
     onboarding_email_bcc: "contatti@developers.italia.it"
-    onboarding_email_override_recipient_addr: "pera@agid.gov.it"
+    onboarding_email_override_recipient_addr: "ccros@pcert.agid.gov.it"
     onboarding_email_subject: "Onboarding Developers Italia"
     onboarding_smtp_hostname: smtp.eu.mailgun.org
     onboarding_smtp_username: onboarding@developers.italia.it
