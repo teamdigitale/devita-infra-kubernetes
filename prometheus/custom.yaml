@@ -34,6 +34,4 @@ alertmanager:
 
 prometheus:
   prometheusSpec:
-    serviceMonitorSelector:
-      matchLabels: null
-
+    serviceMonitorSelectorNilUsesHelmValues: false
