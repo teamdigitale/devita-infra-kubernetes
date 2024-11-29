@@ -20,7 +20,7 @@ configuration:
 
 initContainers:
   - name: velero-plugin-for-microsoft-azure
-    image: velero/velero-plugin-for-microsoft-azure:v1.10.1
+    image: velero/velero-plugin-for-microsoft-azure:v1.11.0
     volumeMounts:
       - mountPath: /target
         name: plugins
