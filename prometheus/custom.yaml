@@ -32,6 +32,10 @@ alertmanager:
       - mountPath: /secrets-store
         name: secrets-store
 
+crds:
+  upgradeJob:
+    enabled: true
+
 prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
