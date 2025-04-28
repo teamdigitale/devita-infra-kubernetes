@@ -17,4 +17,5 @@ extraVolumeMounts:
   - mountPath: /secrets-store
     name: secrets-store
 
-provider: cloudflare
+provider:
+  name: cloudflare
