@@ -16,11 +16,12 @@ configuration:
         resourceGroup: devita-prod-rg
         subscriptionId: d30b533f-c88b-45ec-867e-8e321aa0b03f
   extraEnvVars:
-    AZURE_CREDENTIALS_FILE: /secrets-store/cloud
+    - name: AZURE_CREDENTIALS_FILE
+      value: /secrets-store/cloud
 
 initContainers:
   - name: velero-plugin-for-microsoft-azure
-    image: velero/velero-plugin-for-microsoft-azure:v1.11.1
+    image: velero/velero-plugin-for-microsoft-azure:v1.12.1
     volumeMounts:
       - mountPath: /target
         name: plugins
