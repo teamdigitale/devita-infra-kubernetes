@@ -26,8 +26,6 @@ spec:
 
             command:
             - ./main.py
-            args:
-            - --lang=it
 
             volumeMounts:
             - mountPath: /secrets-store
