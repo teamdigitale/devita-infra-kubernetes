@@ -1,41 +1,177 @@
----
-# These mods are needed for AKS and to configure
-# the alert manager. More info here:
-# https://atouati.com/posts/2019/12/aks-monitoring-with-prometheus/
-
-# Disabling scraping of Master Nodes Components
-kubeControllerManager:
-  enabled: false
-
-kubeScheduler:
-  enabled: false
-
-kubeEtcd:
-  enabled: false
-
-kubeProxy:
-  enabled: false
+# Helm values per `prometheus-community/kube-prometheus-stack` su
+# developers-italia-prod (namespace `monitoring`, release name
+# `kube-prometheus-stack`).
+#
+# Chart pinned: prometheus-community/kube-prometheus-stack 85.2.0
+#   → prometheus-operator v0.90.1, Grafana v13.0.0,
+#     kube-state-metrics, prometheus-node-exporter.
+#
+# Allineato 2026-05 alla realtà cluster (`helm get values` rev 12), con
+# migrazione dei `*SelectorNilUsesHelmValues` (deprecati da chart 63) a
+# `*Selector.matchLabels: null`. Vedi README.md per la procedura d'upgrade
+# (apply manuale dei CRDs v0.90.1 prima di `helm upgrade`).
 
 alertmanager:
+  enabled: true
+  service:
+    port: 9093
+    type: ClusterIP
   alertmanagerSpec:
-    externalUrl: "http://localhost:9093"
-    useExistingSecret: true
-    configSecret: prometheus-azure-kv
-    volumes:
-      - name: secrets-store
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: prometheus
-    volumeMounts:
-      - mountPath: /secrets-store
-        name: secrets-store
+    # `None` = consenti routing AlertmanagerConfig cross-namespace senza
+    # filtro su namespace label (richiesto: i CRD AlertmanagerConfig vivono
+    # nei namespace dei singoli servizi, es. backups, monitoring).
+    alertmanagerConfigMatcherStrategy:
+      type: None
+    retention: 2880h
+    resources:
+      limits:   { cpu: 200m, memory: 256Mi }
+      requests: { cpu: 100m, memory: 128Mi }
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          storageClassName: managed-premium
+          resources:
+            requests: { storage: 5Gi }
 
-crds:
-  upgradeJob:
+grafana:
+  enabled: true
+  adminUser: admin
+  # NB: la password runtime è stata cambiata in DB (PVC persistente la
+  # mantiene attraverso gli upgrade). Da chart 79 il default di
+  # adminPassword viene generato random se non impostato — lasciamo questo
+  # valore esplicito per evitare reset accidentale a installazioni pulite.
+  adminPassword: admin
+  persistence:
     enabled: true
+    size: 10Gi
+    storageClassName: managed-premium
+  resources:
+    limits:   { cpu: 500m, memory: 512Mi }
+    requests: { cpu: 100m, memory: 128Mi }
+  service:
+    port: 80
+    type: ClusterIP
+  dashboardProviders:
+    dashboardproviders:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ""
+          type: file
+          editable: true
+          disableDeletion: false
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    # NB Grafana 13: alcune dashboard community vecchie (panel Angular)
+    # potrebbero non renderizzare correttamente. Da rivalutare/sostituire
+    # in un follow-up PR; le dashboard custom (es. postgres-backup) sono
+    # già panel-moderne e non interessate.
+    default:
+      kubernetes-cluster-monitoring:
+        datasource: Prometheus
+        gnetId: 7249
+        revision: 1
+      kubernetes-pods:
+        datasource: Prometheus
+        gnetId: 6417
+        revision: 1
+      node-exporter:
+        datasource: Prometheus
+        gnetId: 1860
+        revision: 27
+      kubernetes-logs:
+        datasource: Loki
+        gnetId: 15141
+        revision: 1
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+  resources:
+    limits:   { cpu: 200m, memory: 256Mi }
+    requests: { cpu: 100m, memory: 128Mi }
 
 prometheus:
+  enabled: true
+  service:
+    port: 9090
+    type: ClusterIP
   prometheusSpec:
-    serviceMonitorSelectorNilUsesHelmValues: false
+    retention: 360h
+    retentionSize: 50GB
+    scrapeInterval: 30s
+    scrapeTimeout: 10s
+    resources:
+      limits:   { cpu: 2000m, memory: 4Gi }
+      requests: { cpu: 500m,  memory: 2Gi }
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          storageClassName: managed-premium
+          resources:
+            requests: { storage: 50Gi }
+    # Selettori "match all" (release-agnostic). Dal chart 63 la forma
+    # `*SelectorNilUsesHelmValues: false` è deprecata: si esprime con
+    # `matchLabels: null`.
+    serviceMonitorSelector: { matchLabels: null }
+    podMonitorSelector:     { matchLabels: null }
+    ruleSelector:           { matchLabels: null }
+    # Scrape "legacy" via annotations Prometheus su pod (prometheus.io/...).
+    # Mantenuto per compatibilità con pod che non espongono ServiceMonitor.
+    additionalScrapeConfigs:
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - action: keep
+            regex: "true"
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          - action: replace
+            regex: (.+)
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            target_label: __metrics_path__
+          - action: replace
+            regex: ""
+            replacement: /metrics
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            target_label: __metrics_path__
+          - action: replace
+            regex: (.+)
+            replacement: $$1
+            source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+          - action: replace
+            regex: (.+);(.+)
+            replacement: $$1:$$2
+            source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            target_label: __address__
+          - action: replace
+            regex: (.+);(.+)
+            replacement: $$1:$$2
+            source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
+            target_label: __address__
+          - action: replace
+            regex: ^([^:]+)$
+            replacement: $$1:80
+            source_labels: [__address__]
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - action: replace
+            source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_name]
+            target_label: kubernetes_pod_name
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: kubernetes_container_name
